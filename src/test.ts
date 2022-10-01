@@ -1,12 +1,6 @@
-import { blob } from 'dom-utils-ts';
 import { either, task, taskEither, taskOption } from 'fp-ts';
 import { pipe } from 'fp-ts/function';
 import { expect, Tests } from 'unit-test-ts';
-
-export type FileSnapshot = {
-  readonly id: string;
-  readonly blob: Blob;
-};
 
 export type TableDBTriggers = unknown;
 
@@ -23,7 +17,7 @@ export type DocSnapshot = {
 };
 
 export type StorageAdmin = {
-  readonly upload: (p: FileSnapshot) => task.Task<unknown>;
+  readonly upload: () => task.Task<unknown>;
   readonly download: (id: string) => taskOption.TaskOption<Blob>;
 };
 
@@ -40,7 +34,7 @@ export type UploadError = {
 };
 
 export type StorageClient = {
-  readonly upload: (p: FileSnapshot) => taskEither.TaskEither<UploadError, unknown>;
+  readonly upload: () => taskEither.TaskEither<UploadError, unknown>;
 };
 
 export type DBClient = {
@@ -59,7 +53,7 @@ export type Config = {
 };
 
 export type Storage = {
-  readonly upload: (p: FileSnapshot) => task.Task<unknown>;
+  readonly upload: () => task.Task<unknown>;
   readonly download: (id: string) => taskOption.TaskOption<Blob>;
 };
 
@@ -96,15 +90,10 @@ export const makeTests = (makeServer: MakeServer): Tests => ({
     task: pipe(
       task.Do,
       task.bind('server', () => makeServer),
-      task.chainFirst(({ server }) => server.admin.migrate({})),
-      task.chainFirst(({ server }) => server.client.auth.signIn({ provider: 'google' })),
-      task.chain(({ server }) =>
-        server.client.storage.upload({
-          id: 'sakurazaka/kira',
-          blob: blob.fromString('masumoto'),
-        })
-      )
+      // task.chainFirst(({ server }) => server.admin.migrate({})),
+      // task.chainFirst(({ server }) => server.client.auth.signIn({ provider: 'google' })),
+      task.chain(({ server }) => server.client.storage.upload())
     ),
-    toEqual: either.left({ type: 'invalid' } as const),
+    toEqual: either.right(true),
   }),
 });

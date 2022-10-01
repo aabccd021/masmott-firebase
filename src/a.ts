@@ -1,10 +1,7 @@
 /* eslint-disable functional/no-expression-statement */
 import { initializeApp } from 'firebase/app';
-import { connectAuthEmulator, createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { connectAuthEmulator, getAuth } from 'firebase/auth';
 import { connectStorageEmulator, getStorage, ref, uploadString } from 'firebase/storage';
-import { task, taskEither } from 'fp-ts';
-
-import { MakeServer } from './test';
 
 const firebaseConfig = {
   apiKey: 'demo',
@@ -21,20 +18,11 @@ connectAuthEmulator(auth, 'http://localhost:9099');
 const storage = getStorage(app);
 connectStorageEmulator(storage, 'localhost', 9199);
 
-const cr = (email: string, password: string) => () =>
-  createUserWithEmailAndPassword(auth, email, password).then(console.log);
+const a = async () => {
+  await uploadString(ref(storage, 'a'), 'emp').then((res) => console.log(res));
+};
 
-export const makeServer: MakeServer = task.of({
-  admin: {
-    migrate: (_) => task.of(undefined),
-  },
-  client: {
-    storage: {
-      upload: () =>
-        taskEither.fromTask(() => uploadString(ref(storage, 'a'), 'emp').then((_) => true)),
-    },
-    auth: {
-      signIn: (_) => cr('aab@gmail.com', 'aabccd'),
-    },
-  },
-});
+console.log('a');
+a();
+console.log('b');
+
