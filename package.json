@@ -1,0 +1,66 @@
+{
+  "name": "masmott-firebase",
+  "version": "0.0.0-semantic-release",
+  "main": "./dist/masmott-firebase.umd.js",
+  "exports": {
+    ".": {
+      "import": "./dist/masmott-firebase.mjs",
+      "require": "./dist/masmott-firebase.umd.js"
+    }
+  },
+  "module": "./dist/masmott-firebase.mjs",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "fix": "format-package --write && eslint --max-warnings=0 --ext .ts . --fix",
+    "lint": "format-package --check && eslint --max-warnings=0 --ext .ts .",
+    "test": "vitest"
+  },
+  "eslintConfig": {
+    "extends": "aabccd021"
+  },
+  "release": {
+    "branches": "main",
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ]
+  },
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "dom-utils-ts": "^1.0.0",
+    "firebase": "^9.10.0",
+    "firebase-admin": "^11.0.1",
+    "fp-ts": "^2.12.3",
+    "ioref-utils-ts": "^1.1.0",
+    "unit-test-ts": "^1.5.3"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.15",
+    "@typescript-eslint/eslint-plugin": "^5.36.2",
+    "@typescript-eslint/parser": "^5.36.2",
+    "@vitest/coverage-c8": "^0.22.1",
+    "aabccd021-tsconfig": "^1.0.2",
+    "c8": "^7.12.0",
+    "eslint": "^8.23.0",
+    "eslint-config-aabccd021": "^1.1.0",
+    "eslint-plugin-fp-ts": "^0.3.2",
+    "eslint-plugin-functional": "^4.2.2",
+    "eslint-plugin-only-warn": "^1.0.3",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-simple-import-sort": "^8.0.0",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "firebase-tools": "^11.13.0",
+    "format-package": "^7.0.0",
+    "happy-dom": "^6.0.4",
+    "prettier": "^2.7.1",
+    "typescript": "^4.8.2",
+    "typescript-language-server": "^1.1.2",
+    "vite": "^3.1.0",
+    "vitest": "^0.22.1"
+  }
+}
