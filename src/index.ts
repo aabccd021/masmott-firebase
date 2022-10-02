@@ -1,8 +1,15 @@
 /* eslint-disable functional/no-expression-statement */
-import { initializeApp } from 'firebase/app';
+import { FirebaseError, initializeApp } from 'firebase/app';
 import { connectAuthEmulator, createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
-import { connectStorageEmulator, getStorage, ref, uploadString } from 'firebase/storage';
+import {
+  connectStorageEmulator,
+  getStorage,
+  ref,
+  UploadResult,
+  uploadString,
+} from 'firebase/storage';
 import { task, taskEither } from 'fp-ts';
+import { writeFile } from 'fs/promises';
 
 import { MakeServer } from './test';
 
@@ -24,17 +31,78 @@ connectStorageEmulator(storage, 'localhost', 9199);
 const cr = (email: string, password: string) => () =>
   createUserWithEmailAndPassword(auth, email, password).then(console.log);
 
-export const makeServer: MakeServer = task.of({
+export type FParams = {
+  readonly client: {
+    readonly storage: {
+      readonly upload: {
+        readonly return: {
+          readonly left: unknown;
+          readonly right: UploadResult;
+        };
+      };
+    };
+  };
+};
+
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export const makeServer: MakeServer<FParams> = task.of({
   admin: {
-    migrate: (_) => task.of(undefined),
+    migrate:
+      ({ allow }) =>
+      async () => {
+        if (allow) {
+          console.log(allow);
+          await writeFile(
+            'storage.rules',
+            `
+rules_version = '2';
+service firebase.storage {
+    match /b/{bucket}/o {
+        match /{allPaths=**} {
+            allow read, write: if true;
+    }
+  }
+}
+`
+          );
+        } else {
+          console.log(allow);
+          await writeFile(
+            'storage.rules',
+            `
+rules_version = '2';
+service firebase.storage {
+    match /b/{bucket}/o {
+        match /{allPaths=**} {
+            allow read, write: if false;
+    }
+  }
+}
+`
+          );
+        }
+        await delay(10);
+      },
   },
   client: {
     storage: {
       upload: () =>
-        taskEither.fromTask(() => uploadString(ref(storage, 'a'), 'emp').then((_) => true)),
+        taskEither.tryCatch(
+          () => uploadString(ref(storage, 'a'), 'emp'),
+          (e) => {
+            console.log(e);
+            if (e instanceof FirebaseError) {
+              if (e.code === 'storage/unauthorized') {
+                return { type: 'unauthorized' };
+              }
+            }
+            return { type: 'unknown' };
+          }
+        ),
     },
     auth: {
-      signIn: (_) => cr('aab@gmail.com', 'aabccd'),
+      signIn: () => cr('aab@gmail.com', 'aabccd'),
     },
   },
 });

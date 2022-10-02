@@ -2,6 +2,19 @@ import { either, task, taskEither, taskOption } from 'fp-ts';
 import { pipe } from 'fp-ts/function';
 import { expect, Tests } from 'unit-test-ts';
 
+export type Params = {
+  readonly client: {
+    readonly storage: {
+      readonly upload: {
+        readonly return: {
+          readonly left: unknown;
+          readonly right: unknown;
+        };
+      };
+    };
+  };
+};
+
 export type TableDBTriggers = unknown;
 
 export type DocKey = {
@@ -30,11 +43,14 @@ export type StorageTriggers = {
 };
 
 export type UploadError = {
-  readonly type: 'invalid';
+  readonly type: 'unauthorized' | 'unknown';
 };
 
-export type StorageClient = {
-  readonly upload: () => taskEither.TaskEither<UploadError, unknown>;
+export type StorageClientUpload<T extends Params['client']['storage']['upload']> =
+  () => taskEither.TaskEither<UploadError & T['return']['left'], T['return']['right']>;
+
+export type StorageClient<T extends Params['client']['storage']> = {
+  readonly upload: StorageClientUpload<T['upload']>;
 };
 
 export type DBClient = {
@@ -58,7 +74,7 @@ export type Storage = {
 };
 
 export type DeployParams = {
-  readonly a?: undefined;
+  readonly allow: boolean;
 };
 
 export type Admin = {
@@ -73,27 +89,39 @@ export type AuthClient = {
   readonly signIn: (p: SignInParams) => task.Task<unknown>;
 };
 
-export type Client = {
-  readonly storage: StorageClient;
+export type Client<T extends Params['client']> = {
+  readonly storage: StorageClient<T['storage']>;
   readonly auth: AuthClient;
 };
 
-export type Server = {
+export type Server<T extends Params> = {
   readonly admin: Admin;
-  readonly client: Client;
+  readonly client: Client<T['client']>;
 };
 
-export type MakeServer = task.Task<Server>;
+export type MakeServer<T extends Params> = task.Task<Server<T>>;
 
-export const makeTests = (makeServer: MakeServer): Tests => ({
+export const makeTests = <T extends Params>(makeServer: MakeServer<T>): Tests => ({
   'cant upload when security rule is empty': expect({
     task: pipe(
       task.Do,
       task.bind('server', () => makeServer),
-      // task.chainFirst(({ server }) => server.admin.migrate({})),
+      task.chainFirst(({ server }) => server.admin.migrate({ allow: true })),
       // task.chainFirst(({ server }) => server.client.auth.signIn({ provider: 'google' })),
-      task.chain(({ server }) => server.client.storage.upload())
+      task.chain(({ server }) => server.client.storage.upload()),
+      task.map(either.isRight)
     ),
-    toEqual: either.right(true),
+    toEqual: true,
+  }),
+  'zz zz': expect({
+    task: pipe(
+      task.Do,
+      task.bind('server', () => makeServer),
+      task.chainFirst(({ server }) => server.admin.migrate({ allow: false })),
+      // task.chainFirst(({ server }) => server.client.auth.signIn({ provider: 'google' })),
+      task.chain(({ server }) => server.client.storage.upload()),
+      taskEither.mapLeft((a) => a.type)
+    ),
+    toEqual: either.left('unauthorized' as const),
   }),
 });
