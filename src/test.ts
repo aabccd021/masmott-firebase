@@ -1,6 +1,5 @@
 import { either, task, taskEither, taskOption } from 'fp-ts';
 import { pipe } from 'fp-ts/function';
-import { expect, Tests } from 'unit-test-ts';
 
 export type Params = {
   readonly client: {
@@ -101,9 +100,11 @@ export type Server<T extends Params> = {
 
 export type MakeServer<T extends Params> = task.Task<Server<T>>;
 
-export const makeTests = <T extends Params>(makeServer: MakeServer<T>): Tests => ({
-  'cant upload when security rule is empty': expect({
-    task: pipe(
+const test = <T, U>(p: T, _q: U): unknown => p;
+
+export const makeTests = <T extends Params>(makeServer: MakeServer<T>) => [
+  test('cant upload when security rule is empty', {
+    expectTask: pipe(
       task.Do,
       task.bind('server', () => makeServer),
       task.chainFirst(({ server }) => server.admin.migrate({ allow: true })),
@@ -113,8 +114,9 @@ export const makeTests = <T extends Params>(makeServer: MakeServer<T>): Tests =>
     ),
     toEqual: true,
   }),
-  'zz zz': expect({
-    task: pipe(
+
+  test('cant upload when security rule is empty', {
+    expectTask: pipe(
       task.Do,
       task.bind('server', () => makeServer),
       task.chainFirst(({ server }) => server.admin.migrate({ allow: false })),
@@ -124,4 +126,4 @@ export const makeTests = <T extends Params>(makeServer: MakeServer<T>): Tests =>
     ),
     toEqual: either.left('unauthorized' as const),
   }),
-});
+];

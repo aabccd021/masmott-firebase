@@ -1,68 +1,49 @@
 {
   "name": "masmott-firebase",
-  "version": "0.0.0-semantic-release",
-  "main": "./dist/masmott-firebase.umd.js",
-  "exports": {
-    ".": {
-      "import": "./dist/masmott-firebase.mjs",
-      "require": "./dist/masmott-firebase.umd.js"
-    }
+  "nazna": {
+    "flake": [
+      "jdk"
+    ]
   },
-  "module": "./dist/masmott-firebase.mjs",
+  "scripts": {
+    "build": "pnpm build:types && pnpm build:es6 && pnpm build:cjs && nazna build cli",
+    "build:cjs": "swc src --out-dir dist/cjs --source-maps --config module.type=commonjs",
+    "build:es6": "swc src --out-dir dist/es6 --source-maps",
+    "build:types": "tsc --project tsconfig.dist.json",
+    "fix": "eslint --max-warnings=0 --ext .ts . --fix",
+    "lint": "eslint --max-warnings=0 --ext .ts .",
+    "pre-push": "pnpm pre-push:dirty && pnpm publish --dry-run",
+    "pre-push:dirty": "CI=true pnpm install && pnpm build && pnpm lint",
+    "test": "firebase emulators:exec 'vitest --run'"
+  },
+  "dependencies": {
+    "firebase": "^9.12.1",
+    "firebase-admin": "^11.2.0",
+    "fp-ts": "^2.13.1",
+    "masmott": "^1.6.1"
+  },
+  "devDependencies": {
+    "@swc/cli": "^0.1.57",
+    "@swc/core": "^1.3.8",
+    "eslint": "^8.25.0",
+    "firebase-tools": "^11.15.0",
+    "nazna": "^1.13.8",
+    "pnpm": "^7.13.4",
+    "typescript": "^4.8.4",
+    "vitest": "^0.24.1"
+  },
+  "version": "0.0.0-semantic-release",
+  "main": "./dist/cjs/index.js",
+  "exports": {
+    "require": "./dist/cjs/index.js",
+    "import": "./dist/es6/index.js"
+  },
+  "module": "./dist/es6/index.js",
   "files": [
     "dist"
   ],
-  "scripts": {
-    "build": "vite build && tsc --emitDeclarationOnly",
-    "fix": "format-package --write && eslint --max-warnings=0 --ext .ts . --fix",
-    "lint": "format-package --check && eslint --max-warnings=0 --ext .ts .",
-    "test": "vitest"
-  },
-  "eslintConfig": {
-    "extends": "aabccd021"
-  },
-  "release": {
-    "branches": "main",
-    "plugins": [
-      "@semantic-release/commit-analyzer",
-      "@semantic-release/release-notes-generator",
-      "@semantic-release/npm",
-      "@semantic-release/github"
-    ]
-  },
-  "types": "./dist/index.d.ts",
-  "dependencies": {
-    "dom-utils-ts": "^1.0.0",
-    "firebase": "^9.10.0",
-    "firebase-admin": "^11.0.1",
-    "fp-ts": "^2.12.3",
-    "ioref-utils-ts": "^1.1.0",
-    "unit-test-ts": "^1.5.3"
-  },
-  "devDependencies": {
-    "@types/node": "^18.7.15",
-    "@typescript-eslint/eslint-plugin": "^5.36.2",
-    "@typescript-eslint/parser": "^5.36.2",
-    "@vitest/coverage-c8": "^0.22.1",
-    "aabccd021-tsconfig": "^1.0.2",
-    "c8": "^7.12.0",
-    "eslint": "^8.23.0",
-    "eslint-config-aabccd021": "^1.1.0",
-    "eslint-plugin-fp-ts": "^0.3.2",
-    "eslint-plugin-functional": "^4.2.2",
-    "eslint-plugin-only-warn": "^1.0.3",
-    "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-simple-import-sort": "^8.0.0",
-    "eslint-plugin-unused-imports": "^2.0.0",
-    "firebase-tools": "^11.13.0",
-    "format-package": "^7.0.0",
-    "happy-dom": "^6.0.4",
-    "jsdom": "^20.0.0",
-    "prettier": "^2.7.1",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.8.2",
-    "typescript-language-server": "^1.1.2",
-    "vite": "^3.1.0",
-    "vitest": "^0.22.1"
-  }
+  "types": "./dist/types/index.d.ts",
+  "repository": "https://github.com/aabccd021/masmott-firebase.git",
+  "license": "MIT",
+  "bin": "./dist/cli.js"
 }

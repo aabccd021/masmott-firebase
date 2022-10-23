@@ -1,3 +1,4 @@
+/* eslint-disable functional/no-conditional-statement */
 /* eslint-disable functional/no-expression-statement */
 import { FirebaseError, initializeApp } from 'firebase/app';
 import { connectAuthEmulator, createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
@@ -58,9 +59,9 @@ export const makeServer: MakeServer<FParams> = task.of({
             `
 rules_version = '2';
 service firebase.storage {
-    match /b/{bucket}/o {
-        match /{allPaths=**} {
-            allow read, write: if true;
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if true;
     }
   }
 }
@@ -73,9 +74,9 @@ service firebase.storage {
             `
 rules_version = '2';
 service firebase.storage {
-    match /b/{bucket}/o {
-        match /{allPaths=**} {
-            allow read, write: if false;
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if false;
     }
   }
 }
