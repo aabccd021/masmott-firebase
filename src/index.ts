@@ -1,18 +1,19 @@
-/* eslint-disable functional/no-conditional-statement */
-/* eslint-disable functional/no-expression-statement */
-import { FirebaseError, initializeApp } from 'firebase/app';
-import { connectAuthEmulator, createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { initializeApp } from 'firebase/app';
+import { connectAuthEmulator, getAuth } from 'firebase/auth';
 import {
   connectStorageEmulator,
+  getDownloadURL,
   getStorage,
   ref,
-  UploadResult,
   uploadString,
 } from 'firebase/storage';
-import { task, taskEither } from 'fp-ts';
-import { writeFile } from 'fs/promises';
+import { either as E, taskEither as TE } from 'fp-ts';
+import { flow } from 'fp-ts/function';
+import * as _fs from 'fs/promises';
+import { DeployConfig, MkStack } from 'masmott';
+import { match } from 'ts-pattern';
 
-import { MakeServer } from './test';
+import { GetDownloadUrlError } from './type';
 
 const firebaseConfig = {
   apiKey: 'demo',
@@ -25,85 +26,61 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+// eslint-disable-next-line functional/no-expression-statement
 connectAuthEmulator(auth, 'http://localhost:9099');
-const storage = getStorage(app);
+export const storage = getStorage(app);
+// eslint-disable-next-line functional/no-expression-statement
 connectStorageEmulator(storage, 'localhost', 9199);
 
-const cr = (email: string, password: string) => () =>
-  createUserWithEmailAndPassword(auth, email, password).then(console.log);
+// const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export type FParams = {
-  readonly client: {
-    readonly storage: {
-      readonly upload: {
-        readonly return: {
-          readonly left: unknown;
-          readonly right: UploadResult;
-        };
-      };
-    };
-  };
+const fs = {
+  writeFile: (path: string, content: string) => () =>
+    _fs.writeFile(path, content, { encoding: 'utf8' }),
 };
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const getStorageRule = (allow: boolean) => `
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if ${allow};
+    }
+  }
+}
+`;
 
-export const makeServer: MakeServer<FParams> = task.of({
+export const storageDir = 'masmott';
+
+export const deployStorageRule = (c: DeployConfig) =>
+  fs.writeFile('storage.rules', getStorageRule(c.storage?.securityRule?.type === 'allowAll'));
+
+const mapGetDownloadUrlErr = flow(
+  GetDownloadUrlError.type.decode,
+  E.matchW(
+    (value) => ({ code: 'unknown', value } as const),
+    (value) =>
+      match(value)
+        .with({ code: 'storage/object-not-found' }, (_) => ({ code: 'not-found' } as const))
+        .exhaustive()
+  )
+);
+
+export const mkStack: MkStack = async () => ({
   admin: {
-    migrate:
-      ({ allow }) =>
-      async () => {
-        if (allow) {
-          console.log(allow);
-          await writeFile(
-            'storage.rules',
-            `
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /{allPaths=**} {
-      allow read, write: if true;
-    }
-  }
-}
-`
-          );
-        } else {
-          console.log(allow);
-          await writeFile(
-            'storage.rules',
-            `
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /{allPaths=**} {
-      allow read, write: if false;
-    }
-  }
-}
-`
-          );
-        }
-        await delay(10);
-      },
+    deploy: deployStorageRule,
   },
   client: {
     storage: {
-      upload: () =>
-        taskEither.tryCatch(
-          () => uploadString(ref(storage, 'a'), 'emp'),
-          (e) => {
-            console.log(e);
-            if (e instanceof FirebaseError) {
-              if (e.code === 'storage/unauthorized') {
-                return { type: 'unauthorized' };
-              }
-            }
-            return { type: 'unknown' };
-          }
+      upload:
+        ({ key, file }) =>
+        () =>
+          uploadString(ref(storage, `${storageDir}/${key}`), file),
+      getDownloadUrl: ({ key }) =>
+        TE.tryCatch(
+          () => getDownloadURL(ref(storage, `${storageDir}/${key}`)),
+          mapGetDownloadUrlErr
         ),
-    },
-    auth: {
-      signIn: () => cr('aab@gmail.com', 'aabccd'),
     },
   },
 });

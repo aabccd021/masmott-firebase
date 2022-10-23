@@ -14,13 +14,16 @@
     "lint": "eslint --max-warnings=0 --ext .ts .",
     "pre-push": "pnpm pre-push:dirty && pnpm publish --dry-run",
     "pre-push:dirty": "CI=true pnpm install && pnpm build && pnpm lint",
-    "test": "firebase emulators:exec 'vitest --run'"
+    "test": "firebase emulators:exec 'vitest --run --outputDiffLines 1000'"
   },
   "dependencies": {
+    "@morphic-ts/batteries": "^3.0.0",
+    "@morphic-ts/summoners": "^3.0.0",
     "firebase": "^9.12.1",
     "firebase-admin": "^11.2.0",
     "fp-ts": "^2.13.1",
-    "masmott": "^1.6.1"
+    "masmott": "^1.6.7",
+    "ts-pattern": "^4.0.5"
   },
   "devDependencies": {
     "@swc/cli": "^0.1.57",

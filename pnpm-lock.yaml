@@ -1,6 +1,8 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@morphic-ts/batteries': ^3.0.0
+  '@morphic-ts/summoners': ^3.0.0
   '@swc/cli': ^0.1.57
   '@swc/core': ^1.3.8
   eslint: ^8.25.0
@@ -8,17 +10,21 @@ specifiers:
   firebase-admin: ^11.2.0
   firebase-tools: ^11.15.0
   fp-ts: ^2.13.1
-  masmott: ^1.6.1
+  masmott: ^1.6.7
   nazna: ^1.13.8
   pnpm: ^7.13.4
+  ts-pattern: ^4.0.5
   typescript: ^4.8.4
   vitest: ^0.24.1
 
 dependencies:
+  '@morphic-ts/batteries': 3.0.0_ijxaxaqzvtydjr7nx22rxz23xi
+  '@morphic-ts/summoners': 3.0.0_4d7wvhfwbxj4u6itqsiiv2wloq
   firebase: 9.12.1
   firebase-admin: 11.2.0_@firebase+app-types@0.8.0
   fp-ts: 2.13.1
-  masmott: 1.6.1
+  masmott: 1.6.7_5wiamviiem5jrhkpe23weokn44
+  ts-pattern: 4.0.5
 
 devDependencies:
   '@swc/cli': 0.1.57_@swc+core@1.3.10
@@ -767,13 +773,11 @@ packages:
     dependencies:
       fp-ts: 2.13.1
       monocle-ts: 2.3.13_fp-ts@2.13.1
-    dev: true
 
   /@morphic-ts/algebras/3.0.0:
     resolution: {integrity: sha512-hPVproq3vAi/OqSGJmHi3oqVc9fDN/PODen+9diFBcy6j/rAwpaB/sjhBB0UbRaYxbLqjhGePxXImSjto9OoHA==}
     dependencies:
       '@morphic-ts/common': 3.0.0
-    dev: true
 
   /@morphic-ts/batteries/3.0.0_ijxaxaqzvtydjr7nx22rxz23xi:
     resolution: {integrity: sha512-gFR+6aKRbcIUxXK/7JjnBjrM6RQqiw35StqgE2bzl3wxHrWvAeciDBAU9FcfeLIe0TcbtqyVeqcFTrF99RUJLw==}
@@ -805,11 +809,9 @@ packages:
     transitivePeerDependencies:
       - fast-check
       - fp-ts-contrib
-    dev: true
 
   /@morphic-ts/common/3.0.0:
     resolution: {integrity: sha512-X5473jHmD9pHCyrEvvgeMDnezKAWh6pl1doFmwEfiZZmCm0ZGrfVbnt7LbwWuFNDkBgKXIBj1R2ERRL0qQk9IQ==}
-    dev: true
 
   /@morphic-ts/eq-interpreters/3.0.0_4d7wvhfwbxj4u6itqsiiv2wloq:
     resolution: {integrity: sha512-fA/vkoAq60dvojLAZRdr6q1gu5FkxOgGHKY83JpN7PA25EMOjV+HYPYSfMlvqRtaDMYC+tPV1oLGKzc898RcvQ==}
@@ -827,7 +829,6 @@ packages:
       io-ts: 2.2.19_fp-ts@2.13.1
       io-ts-types: 0.5.19_inkmjz2pkgjcbv54elgduozr7u
       newtype-ts: 0.3.5_y4ecnzjsatnzoei5elwf4wjeqa
-    dev: true
 
   /@morphic-ts/fastcheck-interpreters/3.0.0_ldv2etvy6jkcihcpzmtbvch23i:
     resolution: {integrity: sha512-hdMC1h3yO3leOnboZzImJmoqNj/xyaXRPsOn1gKXCQHUWDRPMVcQO7rX7zDWLuArJuCYF2gCROvH8a6oMLCdhw==}
@@ -846,7 +847,6 @@ packages:
       io-ts: 2.2.19_fp-ts@2.13.1
       io-ts-types: 0.5.19_inkmjz2pkgjcbv54elgduozr7u
       newtype-ts: 0.3.5_y4ecnzjsatnzoei5elwf4wjeqa
-    dev: true
 
   /@morphic-ts/io-ts-interpreters/3.0.0_4d7wvhfwbxj4u6itqsiiv2wloq:
     resolution: {integrity: sha512-wkKQIlTpBWkrKEs5f+/8iJmCo1vW/aBKb85aW+/325gh676igY4qWYc9X9p59ElKh6UXwxI04dGiO5h2ECQoAg==}
@@ -863,7 +863,6 @@ packages:
       newtype-ts: 0.3.5_y4ecnzjsatnzoei5elwf4wjeqa
     transitivePeerDependencies:
       - fp-ts
-    dev: true
 
   /@morphic-ts/json-schema-interpreters/3.0.0_wfmw6stqs4bebguxyniy2kjfga:
     resolution: {integrity: sha512-KmQEn5uuCWnCkIl773bjOQFc9K3nQl+ur5rm32vCCwQDxGk0Q2MFHA5W5lvybfh6f3FGVLpzmCp6OT9qUC3lHw==}
@@ -882,7 +881,6 @@ packages:
       io-ts: 2.2.19_fp-ts@2.13.1
       io-ts-types: 0.5.19_inkmjz2pkgjcbv54elgduozr7u
       newtype-ts: 0.3.5_y4ecnzjsatnzoei5elwf4wjeqa
-    dev: true
 
   /@morphic-ts/model-algebras/3.0.0_4d7wvhfwbxj4u6itqsiiv2wloq:
     resolution: {integrity: sha512-1It0q+HfyDTeE0hGvKfjXiRWXnkg6hWudPlzn2b5AqFIZcuqW71jY0mlrua2AfaBRGXU4W7xLlDqIox0wrfPUw==}
@@ -898,7 +896,6 @@ packages:
       io-ts: 2.2.19_fp-ts@2.13.1
       io-ts-types: 0.5.19_inkmjz2pkgjcbv54elgduozr7u
       newtype-ts: 0.3.5_y4ecnzjsatnzoei5elwf4wjeqa
-    dev: true
 
   /@morphic-ts/ord-interpreters/3.0.0_4d7wvhfwbxj4u6itqsiiv2wloq:
     resolution: {integrity: sha512-lAwHRPZNbHtReqj7vkLD+1TmfZuA3jglqzNV4GANG7SlrH1VwmTgJkEs80Y1WY+mKpzEd3Tozzp41vK7mX494Q==}
@@ -915,7 +912,6 @@ packages:
       io-ts: 2.2.19_fp-ts@2.13.1
       io-ts-types: 0.5.19_inkmjz2pkgjcbv54elgduozr7u
       newtype-ts: 0.3.5_y4ecnzjsatnzoei5elwf4wjeqa
-    dev: true
 
   /@morphic-ts/show-interpreters/3.0.0_4d7wvhfwbxj4u6itqsiiv2wloq:
     resolution: {integrity: sha512-W6Vs6AyrDKPMkF2Fwnw6fspx+xiAwRPOxuJ9U2gEeRAanA1izbscx6J+bZTA0MKTk0GiJH/B1B6mnJ5Z1lpdsA==}
@@ -932,7 +928,6 @@ packages:
       io-ts: 2.2.19_fp-ts@2.13.1
       io-ts-types: 0.5.19_inkmjz2pkgjcbv54elgduozr7u
       newtype-ts: 0.3.5_y4ecnzjsatnzoei5elwf4wjeqa
-    dev: true
 
   /@morphic-ts/summoners/3.0.0_4d7wvhfwbxj4u6itqsiiv2wloq:
     resolution: {integrity: sha512-6F0IKdd/lD5UDkAcDJVRmx9S5UWlxttLWRaW3+s7ux8IGn+6WZ/EgcgYePfzytlqRwzDD+2wfEg3vNnTVJ2Bkw==}
@@ -948,7 +943,6 @@ packages:
       - io-ts
       - io-ts-types
       - newtype-ts
-    dev: true
 
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -3178,7 +3172,6 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       pure-rand: 5.0.3
-    dev: true
 
   /fast-deep-equal/3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
@@ -3189,7 +3182,6 @@ packages:
 
   /fast-equals/2.0.4:
     resolution: {integrity: sha512-caj/ZmjHljPrZtbzJ3kfH5ia/k4mTJe/qSiXAGzxZWRZgsgDV0cvNaQULqUX8t0/JVlzzEdYOwCN5DmzTxoD4w==}
-    dev: true
 
   /fast-glob/3.2.12:
     resolution: {integrity: sha512-DVj4CQIYYow0BlaelwK1pHl5n5cRSJfM60UA0zK891sVInoPri2Ekj7+e1CT3/3qxXenpI+nBBmQAcJPJgaj4w==}
@@ -3484,7 +3476,6 @@ packages:
       fp-ts: ^2.1.2
     dependencies:
       fp-ts: 2.13.1
-    dev: true
 
   /fp-ts-std/0.15.0_sddbbwftoqt3d5g3p7ix53ouca:
     resolution: {integrity: sha512-45Kd1RrXFLsZGPyai20dmbgowuEgqJeRVKALt1sAyc5qTT94m0r151LQsgJ7XQ8jJNt6E27NEPziC6LHcANnNw==}
@@ -4109,7 +4100,6 @@ packages:
       io-ts: 2.2.19_fp-ts@2.13.1
       monocle-ts: 2.3.13_fp-ts@2.13.1
       newtype-ts: 0.3.5_y4ecnzjsatnzoei5elwf4wjeqa
-    dev: true
 
   /io-ts/2.2.19_fp-ts@2.13.1:
     resolution: {integrity: sha512-ED0GQwvKRr5C2jqOOJCkuJW2clnbzqFexQ8V7Qsb+VB36S1Mk/OKH7k0FjSe4mjKy9qBRA3OqgVGyFMUEKIubw==}
@@ -4117,7 +4107,6 @@ packages:
       fp-ts: ^2.5.0
     dependencies:
       fp-ts: 2.13.1
-    dev: true
 
   /ip-regex/4.3.0:
     resolution: {integrity: sha512-B9ZWJxHHOHUhUjCPrMpLD4xEq35bUTClHM1S6CBU5ixQnkZmwipwgc96vAd7AAGM9TGHvJR+Uss+/Ak6UphK+Q==}
@@ -4769,11 +4758,21 @@ packages:
     engines: {node: '>= 12'}
     hasBin: true
 
-  /masmott/1.6.1:
-    resolution: {integrity: sha512-HkbFEiKg0C2QT5FjR3U1YNhdv31T9IcmMa5qy7yIuda3s6wOnQ8a9uB0zeI+QiC9H8l0MBq+qMFeLlgyMynA3Q==}
+  /masmott/1.6.7_5wiamviiem5jrhkpe23weokn44:
+    resolution: {integrity: sha512-O1GrUYFki8gIXtD4H8nD/mpfUOy2KcBDjWPi+bE+sy8cksjl6f4Su3lrJ6J6A5HTR6ViYalT4GeJkeLGrDj9Uw==}
     hasBin: true
     dependencies:
+      '@morphic-ts/batteries': 3.0.0_ijxaxaqzvtydjr7nx22rxz23xi
+      '@morphic-ts/summoners': 3.0.0_4d7wvhfwbxj4u6itqsiiv2wloq
       fp-ts: 2.13.1
+    transitivePeerDependencies:
+      - fast-check
+      - fast-equals
+      - fp-ts-contrib
+      - io-ts
+      - io-ts-types
+      - monocle-ts
+      - newtype-ts
     dev: false
 
   /mdurl/1.0.1:
@@ -4936,7 +4935,6 @@ packages:
       fp-ts: ^2.5.0
     dependencies:
       fp-ts: 2.13.1
-    dev: true
 
   /morgan/1.10.0:
     resolution: {integrity: sha512-AbegBVI4sh6El+1gNwvD5YIck7nSA36weD7xvIxG4in80j/UoK8AEGaWnnz8v1GxonMCltmlNs5ZKbGvl9b1XQ==}
@@ -5037,7 +5035,6 @@ packages:
     dependencies:
       fp-ts: 2.13.1
       monocle-ts: 2.3.13_fp-ts@2.13.1
-    dev: true
 
   /nice-try/1.0.5:
     resolution: {integrity: sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==}
@@ -5579,7 +5576,6 @@ packages:
 
   /pure-rand/5.0.3:
     resolution: {integrity: sha512-9N8x1h8dptBQpHyC7aZMS+iNOAm97WMGY0AFrguU1cpfW3I5jINkWe5BIY5md0ofy+1TCIELsVcm/GJXZSaPbw==}
-    dev: true
 
   /qs/6.11.0:
     resolution: {integrity: sha512-MvjoMCJwEarSbUYk5O+nmoSzSutSsTwF85zcHPQ9OrlFoZOYIjaqBAJIqIXjptyD5vThxGq52Xu/MaJzRkIk4Q==}
@@ -6359,7 +6355,6 @@ packages:
 
   /ts-pattern/4.0.5:
     resolution: {integrity: sha512-Bq44KCEt7JVaNLa148mBCJkcQf4l7jtLEBDuDdeuLynWDA+1a60P4D0rMkqSM9mOKLQbIWUddE9h3XKyKwBeqA==}
-    dev: true
 
   /tslib/1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
