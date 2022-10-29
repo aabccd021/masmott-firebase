@@ -22,7 +22,7 @@
     "firebase": "^9.12.1",
     "firebase-admin": "^11.2.0",
     "fp-ts": "^2.13.1",
-    "masmott": "^1.6.7",
+    "masmott": "^1.6.9",
     "ts-pattern": "^4.0.5"
   },
   "devDependencies": {

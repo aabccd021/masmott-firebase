@@ -10,7 +10,7 @@ specifiers:
   firebase-admin: ^11.2.0
   firebase-tools: ^11.15.0
   fp-ts: ^2.13.1
-  masmott: ^1.6.7
+  masmott: ^1.6.9
   nazna: ^1.13.8
   pnpm: ^7.13.4
   ts-pattern: ^4.0.5
@@ -23,7 +23,7 @@ dependencies:
   firebase: 9.12.1
   firebase-admin: 11.2.0_@firebase+app-types@0.8.0
   fp-ts: 2.13.1
-  masmott: 1.6.7_5wiamviiem5jrhkpe23weokn44
+  masmott: 1.6.9_5wiamviiem5jrhkpe23weokn44
   ts-pattern: 4.0.5
 
 devDependencies:
@@ -597,8 +597,8 @@ packages:
     dev: true
     optional: true
 
-  /@google-cloud/firestore/6.4.0:
-    resolution: {integrity: sha512-qhL5V8S6uIGlESQYC/TMKISlKHaM2qSACz0X15ID0s4F1NuVgSM3Z2FS10WYHdCGIwJ2C73xdLaS+ByFDsu7sg==}
+  /@google-cloud/firestore/6.4.1:
+    resolution: {integrity: sha512-5q4sl1XCL8NH2y82KZ4WQGHDOPnrSMYq3JpIeKD5C0OCSb4MfckOTB9LeAQ3p5tlL+7UsVRHj0SyzKz27XZJjw==}
     engines: {node: '>=12.0.0'}
     requiresBuild: true
     dependencies:
@@ -674,8 +674,8 @@ packages:
       - supports-color
     dev: true
 
-  /@google-cloud/storage/6.5.4:
-    resolution: {integrity: sha512-7ntxYkceJo0FzKvHZU988Vy+PFRErSiqEIgcErJ+Hg8vU+nCw0dhg2K0uJJSnUJoEPJLz4DFAMqYCme0WhD2uA==}
+  /@google-cloud/storage/6.6.0:
+    resolution: {integrity: sha512-z1rj7ft15TZd7hzPVsqTZPduLPR+ZMOnwUME9d1yynJvHm5bWkyV3d3eigZ+v2Zirl7rjk8UZTdzRSYr1MvgRQ==}
     engines: {node: '>=12'}
     requiresBuild: true
     dependencies:
@@ -3309,8 +3309,8 @@ packages:
       node-forge: 1.3.1
       uuid: 9.0.0
     optionalDependencies:
-      '@google-cloud/firestore': 6.4.0
-      '@google-cloud/storage': 6.5.4
+      '@google-cloud/firestore': 6.4.1
+      '@google-cloud/storage': 6.6.0
     transitivePeerDependencies:
       - '@firebase/app-types'
       - encoding
@@ -4719,6 +4719,17 @@ packages:
     dev: true
     optional: true
 
+  /make-union-morphic-ts/1.0.7_tkkhkw7abvjyxavu6h6oqh543q:
+    resolution: {integrity: sha512-qT/Ke/TQIfIVZUCh5tu3ctTaA/VmtdD7BDZb8VWHMovITWxlsNDBW52CR3XPFuWOSrWmi50RLTMjqFcJcRgcUw==}
+    hasBin: true
+    peerDependencies:
+      '@morphic-ts/batteries': ^3.0.0
+      '@morphic-ts/summoners': ^3.0.0
+    dependencies:
+      '@morphic-ts/batteries': 3.0.0_ijxaxaqzvtydjr7nx22rxz23xi
+      '@morphic-ts/summoners': 3.0.0_4d7wvhfwbxj4u6itqsiiv2wloq
+    dev: false
+
   /markdown-it-anchor/8.6.5_2zb4u3vubltivolgu556vv4aom:
     resolution: {integrity: sha512-PI1qEHHkTNWT+X6Ip9w+paonfIQ+QZP9sCeMYi47oqhH+EsW8CrJ8J7CzV19QVOj6il8ATGbK2nTECj22ZHGvQ==}
     peerDependencies:
@@ -4758,13 +4769,14 @@ packages:
     engines: {node: '>= 12'}
     hasBin: true
 
-  /masmott/1.6.7_5wiamviiem5jrhkpe23weokn44:
-    resolution: {integrity: sha512-O1GrUYFki8gIXtD4H8nD/mpfUOy2KcBDjWPi+bE+sy8cksjl6f4Su3lrJ6J6A5HTR6ViYalT4GeJkeLGrDj9Uw==}
+  /masmott/1.6.9_5wiamviiem5jrhkpe23weokn44:
+    resolution: {integrity: sha512-O4sdFnaFhNaGrKQbahY9l1R2z/7JX7flfQ5As1Pf3Yr5is0IVRTwvNf/xzyw/BqjBjf15BFl8MB7zs6AwyDifw==}
     hasBin: true
     dependencies:
       '@morphic-ts/batteries': 3.0.0_ijxaxaqzvtydjr7nx22rxz23xi
       '@morphic-ts/summoners': 3.0.0_4d7wvhfwbxj4u6itqsiiv2wloq
       fp-ts: 2.13.1
+      make-union-morphic-ts: 1.0.7_tkkhkw7abvjyxavu6h6oqh543q
     transitivePeerDependencies:
       - fast-check
       - fast-equals

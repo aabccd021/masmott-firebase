@@ -10,7 +10,8 @@ import {
 import { either as E, taskEither as TE } from 'fp-ts';
 import { flow } from 'fp-ts/function';
 import * as _fs from 'fs/promises';
-import { DeployConfig, MkStack } from 'masmott';
+import * as Masmott from 'masmott';
+import { MkStack, Stack } from 'masmott';
 import { match } from 'ts-pattern';
 
 import { GetDownloadUrlError } from './type';
@@ -50,37 +51,41 @@ service firebase.storage {
 }
 `;
 
-export const storageDir = 'masmott';
-
-export const deployStorageRule = (c: DeployConfig) =>
+export const deploy: Stack['admin']['deploy'] = (c) =>
   fs.writeFile('storage.rules', getStorageRule(c.storage?.securityRule?.type === 'allowAll'));
 
-const mapGetDownloadUrlErr = flow(
-  GetDownloadUrlError.type.decode,
-  E.matchW(
-    (value) => ({ code: 'unknown', value } as const),
-    (value) =>
-      match(value)
-        .with({ code: 'storage/object-not-found' }, (_) => ({ code: 'not-found' } as const))
-        .exhaustive()
-  )
-);
+export const storageDir = 'masmott';
+
+const upload: Stack['client']['storage']['upload'] =
+  ({ key, file }) =>
+  () =>
+    uploadString(ref(storage, `${storageDir}/${key}`), file);
+
+const getDownloadUrl: Stack['client']['storage']['getDownloadUrl'] = ({ key }) =>
+  TE.tryCatch(
+    () => getDownloadURL(ref(storage, `${storageDir}/${key}`)),
+    flow(
+      GetDownloadUrlError.type.decode,
+      E.match(
+        (unknownError) => Masmott.GetDownloadUrlError.Union.of.Unknown({ value: unknownError }),
+        (knownError) =>
+          match(knownError)
+            .with({ code: 'storage/object-not-found' }, (_) =>
+              Masmott.GetDownloadUrlError.Union.of.NotFound({})
+            )
+            .exhaustive()
+      )
+    )
+  );
 
 export const mkStack: MkStack = async () => ({
   admin: {
-    deploy: deployStorageRule,
+    deploy,
   },
   client: {
     storage: {
-      upload:
-        ({ key, file }) =>
-        () =>
-          uploadString(ref(storage, `${storageDir}/${key}`), file),
-      getDownloadUrl: ({ key }) =>
-        TE.tryCatch(
-          () => getDownloadURL(ref(storage, `${storageDir}/${key}`)),
-          mapGetDownloadUrlErr
-        ),
+      upload,
+      getDownloadUrl,
     },
   },
 });
