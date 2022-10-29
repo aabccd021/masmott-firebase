@@ -11,7 +11,7 @@ specifiers:
   firebase-tools: ^11.15.0
   fp-ts: ^2.13.1
   masmott: ^1.6.9
-  nazna: ^1.13.8
+  nazna: ^1.13.11
   pnpm: ^7.13.4
   ts-pattern: ^4.0.5
   typescript: ^4.8.4
@@ -31,7 +31,7 @@ devDependencies:
   '@swc/core': 1.3.10
   eslint: 8.26.0
   firebase-tools: 11.15.0
-  nazna: 1.13.8_mlnmzotqg7eeoy4ljcukb4c5w4
+  nazna: 1.13.11_mlnmzotqg7eeoy4ljcukb4c5w4
   pnpm: 7.14.0
   typescript: 4.8.4
   vitest: 0.24.3
@@ -4990,8 +4990,8 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
-  /nazna/1.13.8_mlnmzotqg7eeoy4ljcukb4c5w4:
-    resolution: {integrity: sha512-RhnD2fbh+B8/JlVNmLsvm8mcB7825iX/CWG1iWbozGY3jHGe7qL0GYynYcehGjtA4c8cynu+sfTpQ6yLuq6YVA==}
+  /nazna/1.13.11_mlnmzotqg7eeoy4ljcukb4c5w4:
+    resolution: {integrity: sha512-Ll8vAoPWiJkjaGj4WTrQ01VgVYNZp+sCuQ2YmSKTW2xQCZpDlQ09t/eVLdEjWbLBi4Ea/1bTkey8Cos+5vImAw==}
     hasBin: true
     dependencies:
       '@morphic-ts/batteries': 3.0.0_ijxaxaqzvtydjr7nx22rxz23xi
