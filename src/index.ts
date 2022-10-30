@@ -87,9 +87,9 @@ const getDownloadUrl: Reader<Env, Stack['client']['storage']['getDownloadUrl']> 
         flow(
           GetDownloadUrlError.type.decode,
           E.match(
-            (unknownError) => Masmott.GetDownloadUrlError.Union.of.Unknown({ value: unknownError }),
-            (knownError) =>
-              match(knownError)
+            (unknownErr) => Masmott.GetDownloadUrlError.Union.of.Unknown({ value: unknownErr }),
+            (knownErr) =>
+              match(knownErr)
                 .with({ code: 'storage/object-not-found' }, (_) =>
                   Masmott.GetDownloadUrlError.Union.of.FileNotFound({})
                 )
