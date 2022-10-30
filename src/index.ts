@@ -155,7 +155,7 @@ const client = apply.sequenceS(R.Apply)({
   db,
 });
 
-export const mkMkStack: ReaderTask<Env, Stack> = pipe(
+export const mkStack: ReaderTask<Env, Stack> = pipe(
   { admin, client },
   apply.sequenceS(R.Apply),
   readerTask.fromReader
