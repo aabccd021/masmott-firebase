@@ -1,47 +1,25 @@
-import { initializeApp } from 'firebase/app';
-import { connectAuthEmulator, getAuth } from 'firebase/auth';
+import { FirebaseOptions, initializeApp } from 'firebase/app';
 import * as FIRESTORE from 'firebase/firestore/lite';
+import * as STORAGE from 'firebase/storage';
 import {
-  connectStorageEmulator,
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadString,
-} from 'firebase/storage';
-import { either as E, io, task as T, taskEither as TE } from 'fp-ts';
+  apply,
+  either as E,
+  io,
+  reader as R,
+  readerTask,
+  task as T,
+  taskEither as TE,
+} from 'fp-ts';
 import { flow, pipe } from 'fp-ts/function';
+import { Reader } from 'fp-ts/Reader';
+import { ReaderTask } from 'fp-ts/ReaderTask';
 import * as std from 'fp-ts-std';
 import * as _fs from 'fs/promises';
 import * as Masmott from 'masmott';
-import { MkStack, Stack } from 'masmott';
+import { Stack } from 'masmott';
 import { match } from 'ts-pattern';
 
 import { GetDownloadUrlError } from './type';
-
-const firebaseConfig = {
-  apiKey: 'demo',
-  authDomain: 'demo.firebaseapp.com',
-  projectId: 'demo',
-  storageBucket: 'demo.appspot.com',
-  messagingSenderId: '234522610378',
-  appId: '1:234522610378:web:7c187b1d5ac02616f74233',
-};
-
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-// eslint-disable-next-line functional/no-expression-statement
-connectAuthEmulator(auth, 'http://localhost:9099');
-
-export const storage = getStorage(app);
-// eslint-disable-next-line functional/no-expression-statement
-connectStorageEmulator(storage, 'localhost', 9199);
-
-export const db = FIRESTORE.getFirestore(app);
-// eslint-disable-next-line functional/no-expression-statement
-FIRESTORE.connectFirestoreEmulator(db, 'localhost', 8080);
-
-// const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const fs = {
   writeFile: (path: string, content: string) => () =>
@@ -70,13 +48,21 @@ service cloud.firestore {
 }
 `;
 
-export const deployStorage: Stack['admin']['deploy']['storage'] = (c) =>
+export type Env = FirebaseOptions;
+
+const getApp = pipe(R.ask<Env>(), R.map(initializeApp));
+
+const getFirestore = flow(getApp, FIRESTORE.getFirestore);
+
+const getStorage = flow(getApp, STORAGE.getStorage);
+
+export const deployStorage: Reader<Env, Stack['admin']['deploy']['storage']> = (_opt) => (c) =>
   pipe(
     fs.writeFile('storage.rules', getStorageRule(c.securityRule?.type === 'allowAll')),
     T.chainFirst(() => std.task.sleep(std.date.mkMilliseconds(250)))
   );
 
-export const deployDb: Stack['admin']['deploy']['db'] = (c) =>
+export const deployDb: Reader<Env, Stack['admin']['deploy']['db']> = (_opt) => (c) =>
   pipe(
     fs.writeFile('firestore.rules', getFirestoreRule(c.securityRule?.type === 'allowAll')),
     T.chainFirst(() => std.task.sleep(std.date.mkMilliseconds(250)))
@@ -84,68 +70,93 @@ export const deployDb: Stack['admin']['deploy']['db'] = (c) =>
 
 export const storageDir = 'masmott';
 
-const upload: Stack['client']['storage']['upload'] =
-  ({ key, file }) =>
-  () =>
-    uploadString(ref(storage, `${storageDir}/${key}`), file);
+const upload: Reader<Env, Stack['client']['storage']['upload']> = flow(
+  getStorage,
+  (storage) =>
+    ({ key, file }) =>
+    () =>
+      STORAGE.uploadString(STORAGE.ref(storage, `${storageDir}/${key}`), file)
+);
 
-const getDownloadUrl: Stack['client']['storage']['getDownloadUrl'] = ({ key }) =>
-  TE.tryCatch(
-    () => getDownloadURL(ref(storage, `${storageDir}/${key}`)),
-    flow(
-      GetDownloadUrlError.type.decode,
-      E.match(
-        (unknownError) => Masmott.GetDownloadUrlError.Union.of.Unknown({ value: unknownError }),
-        (knownError) =>
-          match(knownError)
-            .with({ code: 'storage/object-not-found' }, (_) =>
-              Masmott.GetDownloadUrlError.Union.of.FileNotFound({})
-            )
-            .exhaustive()
+const getDownloadUrl: Reader<Env, Stack['client']['storage']['getDownloadUrl']> = flow(
+  getStorage,
+  (storage) =>
+    ({ key }) =>
+      TE.tryCatch(
+        () => STORAGE.getDownloadURL(STORAGE.ref(storage, `${storageDir}/${key}`)),
+        flow(
+          GetDownloadUrlError.type.decode,
+          E.match(
+            (unknownError) => Masmott.GetDownloadUrlError.Union.of.Unknown({ value: unknownError }),
+            (knownError) =>
+              match(knownError)
+                .with({ code: 'storage/object-not-found' }, (_) =>
+                  Masmott.GetDownloadUrlError.Union.of.FileNotFound({})
+                )
+                .exhaustive()
+          )
+        )
       )
-    )
-  );
+);
 
-const setDoc: Stack['client']['db']['setDoc'] =
-  ({ key, data }) =>
-  () =>
-    FIRESTORE.setDoc(FIRESTORE.doc(db, key.collection, key.id), data);
+const setDoc: Reader<Env, Stack['client']['db']['setDoc']> = flow(
+  getFirestore,
+  (db) =>
+    ({ key, data }) =>
+    () =>
+      FIRESTORE.setDoc(FIRESTORE.doc(db, key.collection, key.id), data)
+);
 
 const getDataFromSnapshot =
   (snapshot: FIRESTORE.DocumentSnapshot): io.IO<FIRESTORE.DocumentData | undefined> =>
   () =>
     snapshot.data();
 
-const getDoc: Stack['client']['db']['getDoc'] = ({ key }) =>
-  pipe(
-    TE.tryCatch(
-      () => FIRESTORE.getDoc(FIRESTORE.doc(db, key.collection, key.id)),
-      (unknownErr) => Masmott.GetDocError.Union.of.Unknown({ value: unknownErr })
-    ),
-    TE.chain(
-      flow(
-        getDataFromSnapshot,
-        io.map(E.fromNullable(Masmott.GetDocError.Union.of.DocNotFound({}))),
-        TE.fromIOEither
+const getDoc: Reader<Env, Stack['client']['db']['getDoc']> = flow(
+  getFirestore,
+  (db) =>
+    ({ key }) =>
+      pipe(
+        TE.tryCatch(
+          () => FIRESTORE.getDoc(FIRESTORE.doc(db, key.collection, key.id)),
+          (unknownErr) => Masmott.GetDocError.Union.of.Unknown({ value: unknownErr })
+        ),
+        TE.chain(
+          flow(
+            getDataFromSnapshot,
+            io.map(E.fromNullable(Masmott.GetDocError.Union.of.DocNotFound({}))),
+            TE.fromIOEither
+          )
+        )
       )
-    )
-  );
+);
 
-export const mkStack: MkStack = async () => ({
-  admin: {
-    deploy: {
-      db: deployDb,
-      storage: deployStorage,
-    },
-  },
-  client: {
-    storage: {
-      upload,
-      getDownloadUrl,
-    },
-    db: {
-      setDoc,
-      getDoc,
-    },
-  },
+const deploy = apply.sequenceS(R.Apply)({
+  db: deployDb,
+  storage: deployStorage,
 });
+
+const admin = apply.sequenceS(R.Apply)({
+  deploy,
+});
+
+const storage = apply.sequenceS(R.Apply)({
+  upload,
+  getDownloadUrl,
+});
+
+const db = apply.sequenceS(R.Apply)({
+  getDoc,
+  setDoc,
+});
+
+const client = apply.sequenceS(R.Apply)({
+  storage,
+  db,
+});
+
+export const mkMkStack: ReaderTask<Env, Stack> = pipe(
+  { admin, client },
+  apply.sequenceS(R.Apply),
+  readerTask.fromReader
+);
