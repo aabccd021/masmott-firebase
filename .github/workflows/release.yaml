@@ -24,8 +24,6 @@ jobs:
         run: pnpm install
       - name: Nazna fix
         run: pnpm nazna fix
-      - name: Lint
-        run: pnpm lint
       - name: Build es6
         run: pnpm build:es6
       - name: Build cjs
@@ -34,6 +32,10 @@ jobs:
         run: pnpm build:types
       - name: Build cli
         run: pnpm nazna build cli
+      - name: Lint
+        run: pnpm lint
+      - name: Test
+        run: pnpm lint
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
