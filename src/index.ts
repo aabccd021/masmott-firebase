@@ -1,15 +1,7 @@
 import { FirebaseOptions, initializeApp } from 'firebase/app';
 import * as FIRESTORE from 'firebase/firestore/lite';
 import * as STORAGE from 'firebase/storage';
-import {
-  apply,
-  either as E,
-  io,
-  reader as R,
-  readerTask,
-  task as T,
-  taskEither as TE,
-} from 'fp-ts';
+import { apply, either as E, reader as R, readerTask, task as T, taskEither as TE } from 'fp-ts';
 import { flow, pipe } from 'fp-ts/function';
 import { Reader } from 'fp-ts/Reader';
 import { ReaderTask } from 'fp-ts/ReaderTask';
@@ -41,9 +33,9 @@ service firebase.storage {
 }
 `;
 
-export const deployStorage: Reader<Env, Stack['admin']['deploy']['storage']> = (_opt) => (c) =>
-  pipe(
-    fs.writeFile('storage.rules', getStorageRule(c.securityRule?.type === 'allowAll')),
+export const deployStorage: Reader<Env, Stack['admin']['deploy']['storage']> = (_) =>
+  flow(
+    (c) => fs.writeFile('storage.rules', getStorageRule(c.securityRule?.type === 'allowAll')),
     T.chainFirst(() => std.task.sleep(std.date.mkMilliseconds(250)))
   );
 
@@ -58,7 +50,7 @@ service cloud.firestore {
 }
 `;
 
-export const deployDb: Reader<Env, Stack['admin']['deploy']['db']> = (_opt) => (c) =>
+export const deployDb: Reader<Env, Stack['admin']['deploy']['db']> = (_) => (c) =>
   pipe(
     fs.writeFile('firestore.rules', getFirestoreRule(c.securityRule?.type === 'allowAll')),
     T.chainFirst(() => std.task.sleep(std.date.mkMilliseconds(250)))
@@ -103,28 +95,21 @@ const setDoc: Reader<Env, Stack['client']['db']['setDoc']> = flow(
       FIRESTORE.setDoc(FIRESTORE.doc(db, key.collection, key.id), data)
 );
 
-const getDataFromSnapshot =
-  (snapshot: FIRESTORE.DocumentSnapshot): io.IO<FIRESTORE.DocumentData | undefined> =>
-  () =>
-    snapshot.data();
-
-const getDoc: Reader<Env, Stack['client']['db']['getDoc']> = flow(
-  getFirestore,
-  (db) =>
+const getDoc: Reader<Env, Stack['client']['db']['getDoc']> = flow(getFirestore, (db) =>
+  flow(
     ({ key }) =>
-      pipe(
-        TE.tryCatch(
-          () => FIRESTORE.getDoc(FIRESTORE.doc(db, key.collection, key.id)),
-          (unknownErr) => Masmott.GetDocError.Union.of.Unknown({ value: unknownErr })
-        ),
-        TE.chain(
-          flow(
-            getDataFromSnapshot,
-            io.map(E.fromNullable(Masmott.GetDocError.Union.of.DocNotFound({}))),
-            TE.fromIOEither
-          )
-        )
+      TE.tryCatch(
+        () => FIRESTORE.getDoc(FIRESTORE.doc(db, key.collection, key.id)),
+        (unknownErr) => Masmott.GetDocError.Union.of.Unknown({ value: unknownErr })
+      ),
+    TE.chain(
+      flow(
+        (snapshot) => snapshot.data(),
+        E.fromNullable(Masmott.GetDocError.Union.of.DocNotFound({})),
+        TE.fromEither
       )
+    )
+  )
 );
 
 const deploy = apply.sequenceS(R.Apply)({
