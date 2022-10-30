@@ -28,7 +28,7 @@ const fs = {
 
 export type Env = FirebaseOptions;
 
-const getApp = pipe(R.ask<Env>(), R.map(initializeApp));
+const getApp = (config: FirebaseOptions) => initializeApp(config);
 
 const getStorageRule = (allow: boolean) => `
 rules_version = '2';
@@ -74,29 +74,24 @@ const upload: Reader<Env, Stack['client']['storage']['upload']> = flow(
       STORAGE.uploadString(STORAGE.ref(storage, key), file)
 );
 
-const getDownloadUrl: Reader<Env, Stack['client']['storage']['getDownloadUrl']> = pipe(
-  R.Do,
-  R.bind('storage', (_) => getStorage),
-  R.map(
-    ({ storage }) =>
-      ({ key }) =>
-        TE.tryCatch(
-          () => STORAGE.getDownloadURL(STORAGE.ref(storage, key)),
-          flow(
-            GetDownloadUrlError.type.decode,
-            E.match(
-              (unknownErr) => Masmott.GetDownloadUrlError.Union.of.Unknown({ value: unknownErr }),
-              (knownErr) =>
-                match(knownErr)
-                  .with({ code: 'storage/object-not-found' }, (_) =>
-                    Masmott.GetDownloadUrlError.Union.of.FileNotFound({})
-                  )
-                  .exhaustive()
-            )
-          )
+const getDownloadUrl: Reader<Env, Stack['client']['storage']['getDownloadUrl']> =
+  (opt) =>
+  ({ key }) =>
+    TE.tryCatch(
+      () => STORAGE.getDownloadURL(STORAGE.ref(getStorage(opt), key)),
+      flow(
+        GetDownloadUrlError.type.decode,
+        E.match(
+          (unknownErr) => Masmott.GetDownloadUrlError.Union.of.Unknown({ value: unknownErr }),
+          (knownErr) =>
+            match(knownErr)
+              .with({ code: 'storage/object-not-found' }, (_) =>
+                Masmott.GetDownloadUrlError.Union.of.FileNotFound({})
+              )
+              .exhaustive()
         )
-  )
-);
+      )
+    );
 
 const getFirestore = flow(getApp, FIRESTORE.getFirestore);
 
