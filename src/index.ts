@@ -26,6 +26,10 @@ const fs = {
     _fs.writeFile(path, content, { encoding: 'utf8' }),
 };
 
+export type Env = FirebaseOptions;
+
+const getApp = pipe(R.ask<Env>(), R.map(initializeApp));
+
 const getStorageRule = (allow: boolean) => `
 rules_version = '2';
 service firebase.storage {
@@ -36,6 +40,12 @@ service firebase.storage {
   }
 }
 `;
+
+export const deployStorage: Reader<Env, Stack['admin']['deploy']['storage']> = (_opt) => (c) =>
+  pipe(
+    fs.writeFile('storage.rules', getStorageRule(c.securityRule?.type === 'allowAll')),
+    T.chainFirst(() => std.task.sleep(std.date.mkMilliseconds(250)))
+  );
 
 const getFirestoreRule = (allow: boolean) => `
 rules_version = '2';
@@ -48,34 +58,20 @@ service cloud.firestore {
 }
 `;
 
-export type Env = FirebaseOptions;
-
-const getApp = pipe(R.ask<Env>(), R.map(initializeApp));
-
-const getFirestore = flow(getApp, FIRESTORE.getFirestore);
-
-const getStorage = flow(getApp, STORAGE.getStorage);
-
-export const deployStorage: Reader<Env, Stack['admin']['deploy']['storage']> = (_opt) => (c) =>
-  pipe(
-    fs.writeFile('storage.rules', getStorageRule(c.securityRule?.type === 'allowAll')),
-    T.chainFirst(() => std.task.sleep(std.date.mkMilliseconds(250)))
-  );
-
 export const deployDb: Reader<Env, Stack['admin']['deploy']['db']> = (_opt) => (c) =>
   pipe(
     fs.writeFile('firestore.rules', getFirestoreRule(c.securityRule?.type === 'allowAll')),
     T.chainFirst(() => std.task.sleep(std.date.mkMilliseconds(250)))
   );
 
-export const storageDir = 'masmott';
+const getStorage = flow(getApp, STORAGE.getStorage);
 
 const upload: Reader<Env, Stack['client']['storage']['upload']> = flow(
   getStorage,
   (storage) =>
     ({ key, file }) =>
     () =>
-      STORAGE.uploadString(STORAGE.ref(storage, `${storageDir}/${key}`), file)
+      STORAGE.uploadString(STORAGE.ref(storage, key), file)
 );
 
 const getDownloadUrl: Reader<Env, Stack['client']['storage']['getDownloadUrl']> = flow(
@@ -83,7 +79,7 @@ const getDownloadUrl: Reader<Env, Stack['client']['storage']['getDownloadUrl']> 
   (storage) =>
     ({ key }) =>
       TE.tryCatch(
-        () => STORAGE.getDownloadURL(STORAGE.ref(storage, `${storageDir}/${key}`)),
+        () => STORAGE.getDownloadURL(STORAGE.ref(storage, key)),
         flow(
           GetDownloadUrlError.type.decode,
           E.match(
@@ -98,6 +94,8 @@ const getDownloadUrl: Reader<Env, Stack['client']['storage']['getDownloadUrl']> 
         )
       )
 );
+
+const getFirestore = flow(getApp, FIRESTORE.getFirestore);
 
 const setDoc: Reader<Env, Stack['client']['db']['setDoc']> = flow(
   getFirestore,
