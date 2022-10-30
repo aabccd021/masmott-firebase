@@ -8,9 +8,17 @@
     },
     "ui": {
       "enabled": false
-    }
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "singleProjectMode": true
   },
   "storage": {
     "rules": "storage.rules"
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
   }
 }
