@@ -31,7 +31,7 @@
     "@swc/core": "^1.3.8",
     "eslint": "^8.25.0",
     "firebase-tools": "^11.15.0",
-    "nazna": "^1.13.14",
+    "nazna": "^1.13.17",
     "node-fetch": "^3.2.10",
     "pnpm": "^7.13.4",
     "typescript": "^4.8.4",
