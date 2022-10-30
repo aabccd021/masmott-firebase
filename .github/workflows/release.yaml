@@ -22,6 +22,17 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install
+      - name: Get Firebase CLI version
+        id: firebase-cli-version
+        shell: bash
+        run: echo "FIREBASE_CLI_VERSION=$(pnpm list firebase-tools | tail -n 1)" >> $GITHUB_OUTPUT
+      - name: Setup Firebase Emulators cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/firebase/emulators
+          key: >-
+            ${{ runner.os }}-firebase-emulators-${{
+            steps.firebase-cli-version.outputs.FIREBASE_CLI_VERSION }}
       - name: Nazna fix
         run: pnpm nazna fix
       - name: Build es6
@@ -35,7 +46,7 @@ jobs:
       - name: Lint
         run: pnpm lint
       - name: Test
-        run: pnpm lint
+        run: pnpm test
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
