@@ -25,7 +25,9 @@ jobs:
       - name: Get Firebase CLI version
         id: firebase-cli-version
         shell: bash
-        run: echo "FIREBASE_CLI_VERSION=$(pnpm list firebase-tools | tail -n 1)" >> $GITHUB_OUTPUT
+        run: >-
+          echo "FIREBASE_CLI_VERSION=$(pnpm list firebase-tools --parseable | tail -n 1 | cut -d '@'
+          -f2)" >> $GITHUB_OUTPUT
       - name: Setup Firebase Emulators cache
         uses: actions/cache@v3
         with:
