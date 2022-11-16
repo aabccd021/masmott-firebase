@@ -3,6 +3,7 @@
   "nazna": {
     "flake": false
   },
+  "sideEffects": false,
   "scripts": {
     "build": "pnpm build:es6 && pnpm build:cjs && pnpm build:types && nazna build cli",
     "build:cjs": "swc src --out-dir dist/cjs --source-maps --config module.type=commonjs",
@@ -33,6 +34,7 @@
     "node-fetch": "^3.2.10",
     "pnpm": "^7.14.2",
     "semantic-release": "^19.0.5",
+    "serve": "^14.1.1",
     "typescript": "^4.8.4",
     "vitest": "^0.24.5"
   },
