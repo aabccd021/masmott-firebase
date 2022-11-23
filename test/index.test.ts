@@ -7,9 +7,9 @@ import { independencyTests } from 'masmott';
 import fetch from 'node-fetch';
 import { beforeEach } from 'vitest';
 
-import { mkStack } from '../src';
+import { stack } from '../src';
 
-const config = {
+const firebaseConfig = {
   projectId: 'demo',
   storageBucket: 'demo.appspot.com',
 
@@ -20,24 +20,24 @@ const firestoreHost = 'localhost';
 const firestorePort = 8080;
 
 // https://firebase.google.com/docs/emulator-suite/connect_and_prototype#connect_your_app_to_the_emulators
-const app = initializeApp(config);
+const app = initializeApp(firebaseConfig);
 connectAuthEmulator(getAuth(app), 'http://localhost:9099');
 connectStorageEmulator(getStorage(app), 'localhost', 9199);
 connectFirestoreEmulator(getFirestore(app), firestoreHost, firestorePort);
 
 // https://firebase.google.com/docs/emulator-suite/connect_storage#admin_sdks
-admin.initializeApp({ projectId: config.projectId });
+admin.initializeApp({ projectId: firebaseConfig.projectId });
 
 beforeEach(async () => {
   // clear storage
-  const [files] = await admin.storage().bucket(config.storageBucket).getFiles();
+  const [files] = await admin.storage().bucket(firebaseConfig.storageBucket).getFiles();
   await Promise.all(files.map((file) => file.delete()));
 
   // https://firebase.google.com/docs/emulator-suite/connect_firestore#clear_your_database_between_tests
   await fetch(
-    `http://${firestoreHost}:${firestorePort}/emulator/v1/projects/${config.projectId}/databases/(default)/documents`,
+    `http://${firestoreHost}:${firestorePort}/emulator/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents`,
     { method: 'DELETE' }
   );
 });
 
-independencyTests(mkStack(config));
+independencyTests(() => stack, { firebaseConfig });
