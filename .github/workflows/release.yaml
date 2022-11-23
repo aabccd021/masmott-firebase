@@ -35,16 +35,12 @@ jobs:
           key: >-
             ${{ runner.os }}-firebase-emulators-${{
             steps.firebase-cli-version.outputs.FIREBASE_CLI_VERSION }}
-      - name: Nazna fix
-        run: pnpm nazna fix
       - name: Build es6
         run: pnpm build:es6
       - name: Build cjs
         run: pnpm build:cjs
       - name: Build types
         run: pnpm build:types
-      - name: Build cli
-        run: pnpm nazna build cli
       - name: Lint
         run: pnpm lint
       - name: Test

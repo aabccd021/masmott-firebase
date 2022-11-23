@@ -3,10 +3,3 @@ node_modules
 .direnv
 dist
 coverage
-
-.eslintrc.json
-.nazna
-.npmrc
-.releaserc.json
-tsconfig.json
-tsconfig.dist.json
