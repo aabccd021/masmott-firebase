@@ -1,18 +1,15 @@
 {
   "name": "masmott-firebase",
-  "nazna": {
-    "flake": false
-  },
   "sideEffects": false,
   "scripts": {
-    "build": "pnpm build:es6 && pnpm build:cjs && pnpm build:types && nazna build cli",
+    "build": "pnpm build:es6 && pnpm build:cjs && pnpm build:types",
     "build:cjs": "swc src --out-dir dist/cjs --source-maps --config module.type=commonjs",
     "build:es6": "swc src --out-dir dist/es6 --source-maps",
     "build:types": "tsc --project tsconfig.dist.json",
     "fix": "eslint --max-warnings=0 --ext .ts . --fix",
     "lint": "eslint --max-warnings=0 --ext .ts .",
     "pre-push": "pnpm pre-push:dirty && pnpm publish --dry-run",
-    "pre-push:dirty": "pnpm install && nazna fix && pnpm build && pnpm lint && pnpm test",
+    "pre-push:dirty": "pnpm install && pnpm build && pnpm lint && pnpm test",
     "test": "firebase emulators:exec 'vitest --run --outputDiffLines 1000'"
   },
   "dependencies": {
@@ -22,7 +19,7 @@
     "firebase-admin": "^11.3.0",
     "fp-ts": "^2.13.1",
     "fp-ts-std": "^0.15.1",
-    "masmott": "^1.9.0",
+    "masmott": "^1.11.0",
     "ts-pattern": "^4.0.6"
   },
   "devDependencies": {
