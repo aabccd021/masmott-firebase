@@ -10,25 +10,28 @@ import fetch from 'node-fetch';
 
 import { stack } from '../src';
 
-const firebaseConfig = {
+const conf = {
   projectId: 'demo',
   storageBucket: 'demo.appspot.com',
+  messagingSenderId: '234522610378',
+  appId: '1:234522610378:web:7c187b1d5ac02616f74233',
 
   // https://stackoverflow.com/a/72839398/9611638
   apiKey: 'demoapikey',
 };
-const firestoreHost = 'localhost';
+const emulatorHost = 'localhost';
 const firestorePort = 8080;
+const authEndpoint = `http://${emulatorHost}:9099`;
 
 // https://firebase.google.com/docs/emulator-suite/connect_and_prototype#connect_your_app_to_the_emulators
-const app = initializeApp(firebaseConfig);
-connectAuthEmulator(getAuth(app), `http://localhost:9099`);
-connectStorageEmulator(getStorage(app), 'localhost', 9199);
-connectFirestoreEmulator(getFirestore(app), firestoreHost, firestorePort);
+const app = initializeApp(conf);
+connectAuthEmulator(getAuth(app), authEndpoint);
+connectStorageEmulator(getStorage(app), emulatorHost, 9199);
+connectFirestoreEmulator(getFirestore(app), emulatorHost, firestorePort);
 
 // https://firebase.google.com/docs/emulator-suite/connect_storage#admin_sdks
-const adminApp = admin.initializeApp({ projectId: firebaseConfig.projectId });
-const bucket = admin.storage(adminApp).bucket(firebaseConfig.storageBucket);
+const adminApp = admin.initializeApp({ projectId: conf.projectId });
+const bucket = admin.storage(adminApp).bucket(conf.storageBucket);
 
 const clearStorage = pipe(
   taskEither.tryCatch(() => bucket.getFiles(), identity),
@@ -44,16 +47,24 @@ const clearStorage = pipe(
 const clearFirestore = taskEither.tryCatch(
   () =>
     fetch(
-      `http://${firestoreHost}:${firestorePort}/emulator/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents`,
+      `http://${emulatorHost}:${firestorePort}/emulator/v1/projects/${conf.projectId}/databases/(default)/documents`,
       { method: 'DELETE' }
     ),
+  identity
+);
+
+// https://firebase.google.com/docs/reference/rest/auth#section-auth-emulator-clearaccounts
+const clearAuth = taskEither.tryCatch(
+  () =>
+    fetch(`${authEndpoint}/emulator/v1/projects/${conf.projectId}/accounts`, { method: 'DELETE' }),
   identity
 );
 
 const mkTestClientEnv = pipe(
   clearStorage,
   taskEither.chainW(() => clearFirestore),
-  taskEither.map(() => ({ firebaseConfig }))
+  taskEither.chainW(() => clearAuth),
+  taskEither.map(() => ({ firebaseConfig: conf }))
 );
 
 runTests(stack, mkTestClientEnv);

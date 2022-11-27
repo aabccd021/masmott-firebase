@@ -6,6 +6,8 @@ import type { Client as Client_, Stack as Stack_ } from 'masmott';
 
 const { summon } = summonFor({});
 
+export const CodedError = summon((F) => F.interface({ code: F.string() }, 'CodedError'));
+
 export const GetDownloadUrlError = makeTagged(summon)('code')({
   'storage/object-not-found': summon((F) =>
     F.interface({ code: F.stringLiteral('storage/object-not-found') }, 'objectNotFound')
