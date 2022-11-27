@@ -1,16 +1,17 @@
 import { initializeApp } from 'firebase/app';
 import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { pipe } from 'fp-ts/function';
-import { Stack } from 'masmott';
 
-import { ClientEnv } from '../../type';
+import type { Client } from '../../type';
 
-type Type = Stack<ClientEnv>['client']['auth']['createUserAndSignInWithEmailAndPassword'];
+type Type = Client['auth']['createUserAndSignInWithEmailAndPassword'];
 
-export const createUserAndSignInWithEmailAndPassword: Type = (env) => (email, password) =>
-  pipe(
-    env.client.firebaseConfig,
-    initializeApp,
-    getAuth,
-    (auth) => () => createUserWithEmailAndPassword(auth, email, password)
-  );
+export const createUserAndSignInWithEmailAndPassword: Type =
+  (env) =>
+  ({ email, password }) =>
+    pipe(
+      env.firebaseConfig,
+      initializeApp,
+      getAuth,
+      (auth) => () => createUserWithEmailAndPassword(auth, email, password)
+    );

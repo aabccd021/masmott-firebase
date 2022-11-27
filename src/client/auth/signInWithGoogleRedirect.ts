@@ -1,15 +1,14 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithRedirect } from 'firebase/auth';
 import { pipe } from 'fp-ts/function';
-import { Stack } from 'masmott';
 
-import { ClientEnv } from '../../type';
+import type { Client } from '../../type';
 
-type SignInWithGoogleRedirect = Stack<ClientEnv>['client']['auth']['signInWithGoogleRedirect'];
+type SignInWithGoogleRedirect = Client['auth']['signInWithGoogleRedirect'];
 
 export const signInWithGoogleRedirect: SignInWithGoogleRedirect = (env) =>
   pipe(
-    env.client.firebaseConfig,
+    env.firebaseConfig,
     initializeApp,
     getAuth,
     (auth) => () => signInWithRedirect(auth, new GoogleAuthProvider())

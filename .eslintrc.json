@@ -8,7 +8,6 @@
     "unused-imports"
   ],
   "ignorePatterns": [
-    "**/*.js",
     "dist/",
     "node_modules"
   ],
@@ -20,6 +19,8 @@
   },
   "extends": [
     "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:@typescript-eslint/strict",
     "plugin:functional/all",
     "plugin:fp-ts/all",
@@ -31,7 +32,19 @@
       "error",
       "type"
     ],
+    "@typescript-eslint/consistent-type-exports": "error",
+    "@typescript-eslint/consistent-type-imports": "error",
+    "@typescript-eslint/default-param-last": "error",
+    "@typescript-eslint/member-ordering": "error",
+    "@typescript-eslint/no-array-constructor": "error",
+    "@typescript-eslint/no-loop-func": "error",
+    "@typescript-eslint/no-redundant-type-constituents": "error",
     "@typescript-eslint/no-shadow": "error",
+    "@typescript-eslint/no-unnecessary-qualifier": "error",
+    "@typescript-eslint/no-useless-empty-export": "error",
+    "@typescript-eslint/sort-type-constituents": "error",
+    "@typescript-eslint/strict-boolean-expressions": "error",
+    "@typescript-eslint/switch-exhaustiveness-check": "error",
     "@typescript-eslint/unbound-method": "off",
     "functional/functional-parameters": "off",
     "functional/no-mixed-type": "off",
@@ -59,7 +72,8 @@
       "error",
       {
         "code": 100,
-        "ignoreUrls": true
+        "ignoreUrls": true,
+        "ignoreTemplateLiterals": true
       }
     ],
     "no-else-return": "error",
@@ -93,8 +107,7 @@
   "overrides": [
     {
       "files": [
-        "test/**.test.ts",
-        "src/test/**.ts"
+        "**/test/**.ts"
       ],
       "rules": {
         "functional/no-return-void": "off",

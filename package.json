@@ -2,15 +2,17 @@
   "name": "masmott-firebase",
   "sideEffects": false,
   "scripts": {
-    "build": "pnpm build:es6 && pnpm build:cjs && pnpm build:types",
+    "build": "rm -rf dist && pnpm build:es6 && pnpm build:cjs && pnpm build:types",
     "build:cjs": "swc src --out-dir dist/cjs --source-maps --config module.type=commonjs",
     "build:es6": "swc src --out-dir dist/es6 --source-maps",
     "build:types": "tsc --project tsconfig.dist.json",
-    "fix": "eslint --max-warnings=0 --ext .ts . --fix",
-    "lint": "eslint --max-warnings=0 --ext .ts .",
+    "fix": "eslint --max-warnings=0 --fix",
+    "lint": "eslint --max-warnings=0",
     "pre-push": "pnpm pre-push:dirty && pnpm publish --dry-run",
     "pre-push:dirty": "pnpm install && pnpm build && pnpm lint && pnpm test",
-    "test": "firebase emulators:exec 'vitest --run --outputDiffLines 1000'"
+    "test:types": "tsc --noEmit",
+    "test:masmott": "firebase emulators:exec 'vitest --run --outputDiffLines 1000'",
+    "test": "pnpm test:types && pnpm test:masmott"
   },
   "dependencies": {
     "@morphic-ts/batteries": "^3.0.0",
@@ -19,7 +21,7 @@
     "firebase-admin": "^11.3.0",
     "fp-ts": "^2.13.1",
     "fp-ts-std": "^0.15.1",
-    "masmott": "^1.11.0",
+    "masmott": "^1.11.4",
     "ts-pattern": "^4.0.6"
   },
   "devDependencies": {
@@ -36,7 +38,7 @@
     "vitest": "^0.24.5"
   },
   "version": "0.0.0-semantic-release",
-  "main": "./dist/cjs/index.js",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     "require": "./dist/cjs/index.js",
     "import": "./dist/es6/index.js"
@@ -45,7 +47,6 @@
   "files": [
     "dist"
   ],
-  "types": "./dist/types/index.d.ts",
   "repository": "https://github.com/aabccd021/masmott-firebase.git",
   "license": "MIT",
   "bin": "./dist/cli.js"

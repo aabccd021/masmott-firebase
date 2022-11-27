@@ -4,12 +4,9 @@
     "declaration": true,
     "declarationMap": true,
     "esModuleInterop": true,
-    "emitDeclarationOnly": true,
-    "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "lib": [ "ESNext" ],
-    "module": "commonjs",
+    "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitOverride": true,
@@ -19,7 +16,7 @@
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "outDir": "dist/types",
+    "outDir": "dist/cjs",
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
@@ -32,7 +29,6 @@
   },
   "include": [
     "src",
-    "test",
-    "vitest.config.ts"
+    "test"
   ]
 }

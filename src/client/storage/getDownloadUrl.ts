@@ -3,16 +3,15 @@ import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { either, taskEither } from 'fp-ts';
 import { flow, pipe } from 'fp-ts/function';
 import * as Masmott from 'masmott';
-import { Stack } from 'masmott';
-import { match } from 'ts-pattern';
 
-import { ClientEnv, GetDownloadUrlError } from '../../type';
+import type { Client } from '../../type';
+import { GetDownloadUrlError } from '../../type';
 
-export const getDownloadUrl: Stack<ClientEnv>['client']['storage']['getDownloadUrl'] =
+export const getDownloadUrl: Client['storage']['getDownloadUrl'] =
   (env) =>
   ({ key }) =>
     pipe(
-      env.client.firebaseConfig,
+      env.firebaseConfig,
       initializeApp,
       getStorage,
       (storage) => ref(storage, key),
@@ -21,15 +20,14 @@ export const getDownloadUrl: Stack<ClientEnv>['client']['storage']['getDownloadU
           () => getDownloadURL(objectRef),
           flow(
             GetDownloadUrlError.type.decode,
-            either.match(
-              (unknownErr) => Masmott.GetDownloadUrlError.Union.of.Unknown({ value: unknownErr }),
-              (knownErr) =>
-                match(knownErr)
-                  .with({ code: 'storage/object-not-found' }, (_) =>
-                    Masmott.GetDownloadUrlError.Union.of.FileNotFound({})
-                  )
-                  .exhaustive()
-            )
+            either.bimap(
+              (value) => Masmott.GetDownloadUrlError.Union.of.ProviderError({ value }),
+              GetDownloadUrlError.matchStrict({
+                'storage/object-not-found': () =>
+                  Masmott.GetDownloadUrlError.Union.of.FileNotFound({}),
+              })
+            ),
+            either.toUnion
           )
         )
     );
