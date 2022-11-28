@@ -29,7 +29,7 @@ export const createUserAndSignInWithEmailAndPassword: Type =
           either.bimap(handleUnknownError, (codedError) =>
             match(codedError)
               .with({ code: 'auth/email-already-in-use' }, () =>
-                Masmott.CreateUserAndSignInWithEmailAndPasswordError.Union.of.UserAlreadyExists({})
+                Masmott.CreateUserAndSignInWithEmailAndPasswordError.Union.of.EmailAlreadyInUse({})
               )
               .otherwise(handleUnknownError)
           ),
