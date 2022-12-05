@@ -9,6 +9,7 @@ import { runTests } from 'masmott/dist/cjs/test';
 import fetch from 'node-fetch';
 
 import { stack } from '../src';
+import type { StackType } from '../src/type';
 
 const conf = {
   projectId: 'demo',
@@ -64,7 +65,7 @@ const mkTestClientEnv = pipe(
   clearStorage,
   taskEither.chainW(() => clearFirestore),
   taskEither.chainW(() => clearAuth),
-  taskEither.map(() => ({ firebaseConfig: conf }))
+  taskEither.map(() => ({ client: { firebaseConfig: conf }, server: undefined, ci: undefined }))
 );
 
-runTests(stack, mkTestClientEnv);
+runTests<StackType>(stack, mkTestClientEnv);

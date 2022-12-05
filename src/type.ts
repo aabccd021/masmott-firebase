@@ -2,7 +2,7 @@ import { summonFor } from '@morphic-ts/batteries/lib/summoner-ESBST';
 import type { AType } from '@morphic-ts/summoners/lib';
 import { makeTagged } from '@morphic-ts/summoners/lib';
 import type { FirebaseOptions } from 'firebase/app';
-import type { Client as Client_, Stack as Stack_ } from 'masmott';
+import type { StackWithEnv } from 'masmott';
 
 const { summon } = summonFor({});
 
@@ -24,10 +24,14 @@ export const UploadDataUrlError = makeTagged(summon)('code')({
 
 export type UploadDataUrlError = AType<typeof UploadDataUrlError>;
 
-export type ClientEnv = {
-  readonly firebaseConfig: FirebaseOptions;
+export type StackType = {
+  readonly env: {
+    readonly client: {
+      readonly firebaseConfig: FirebaseOptions;
+    };
+    readonly server: undefined;
+    readonly ci: undefined;
+  };
 };
 
-export type Client = Client_<ClientEnv>;
-
-export type Stack = Stack_<ClientEnv>;
+export type Stack = StackWithEnv<StackType>;

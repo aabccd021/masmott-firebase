@@ -16,9 +16,9 @@ service cloud.firestore {
 }
 `;
 
-export const deployDb: Stack['ci']['deployDb'] = (c) =>
+export const deployDb: Stack['ci']['deployDb'] = () => () =>
   pipe(
-    () => fs.writeFile('firestore.rules', getFirestoreRule(c.securityRule?.type === 'allowAll')),
+    () => fs.writeFile('firestore.rules', getFirestoreRule(true)),
     task.chainFirst(() => std.task.sleep(std.date.mkMilliseconds(250))),
     taskEither.fromTask
   );

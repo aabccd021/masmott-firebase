@@ -2,12 +2,11 @@ import { initializeApp } from 'firebase/app';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { either, taskEither } from 'fp-ts';
 import { flow, pipe } from 'fp-ts/function';
-import * as Masmott from 'masmott';
 
-import type { Client } from '../../type';
+import type { Stack } from '../../type';
 import { GetDownloadUrlError } from '../../type';
 
-export const getDownloadUrl: Client['storage']['getDownloadUrl'] =
+export const getDownloadUrl: Stack['client']['storage']['getDownloadUrl'] =
   (env) =>
   ({ key }) =>
     pipe(
@@ -21,10 +20,9 @@ export const getDownloadUrl: Client['storage']['getDownloadUrl'] =
           flow(
             GetDownloadUrlError.type.decode,
             either.bimap(
-              (value) => Masmott.GetDownloadUrlError.Union.of.ProviderError({ value }),
+              (value) => ({ code: 'ProviderError' as const, value }),
               GetDownloadUrlError.matchStrict({
-                'storage/object-not-found': () =>
-                  Masmott.GetDownloadUrlError.Union.of.FileNotFound({}),
+                'storage/object-not-found': () => ({ code: 'FileNotFound' as const }),
               })
             ),
             either.toUnion

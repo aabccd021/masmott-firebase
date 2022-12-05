@@ -5,12 +5,11 @@ import { pipe } from 'fp-ts/function';
 
 import type { Stack } from '../../type';
 
-export const getDoc: Stack['client']['db']['getDoc'] =
-  (env) =>
+export const getDoc: Stack['server']['db']['getDoc'] =
+  () =>
   ({ key: { collection, id } }) =>
     pipe(
-      env.firebaseConfig,
-      initializeApp,
+      initializeApp(),
       getFirestore,
       (firestore) => doc(firestore, collection, id),
       (docRef) => () => _getDoc(docRef),
