@@ -1,5 +1,5 @@
 import { option, readonlyArray, readonlyRecord, readonlyTuple, taskEither } from 'fp-ts';
-import { pipe } from 'fp-ts/function';
+import { flow, pipe } from 'fp-ts/function';
 import * as std from 'fp-ts-std';
 import * as fs from 'fs/promises';
 import type { Stack as StackT } from 'masmott';
@@ -65,12 +65,13 @@ const getFirestoreRuleStr = (rules: StackT.ci.DeployDb.Param): string =>
           createRuleStr(collectionName, collectionRule.securityRule?.create),
         ],
         readonlyArray.compact,
-        std.readonlyArray.join('\n'),
-        collectionRuleStr(collectionName)
+        option.fromPredicate(readonlyArray.isNonEmpty),
+        option.map(flow(std.readonlyArray.join('\n'), collectionRuleStr(collectionName)))
       )
     ),
     readonlyRecord.toReadonlyArray,
     readonlyArray.map(readonlyTuple.snd),
+    readonlyArray.compact,
     option.fromPredicate(readonlyArray.isNonEmpty),
     option.map(std.readonlyArray.join('\n')),
     option.map((content) => `  match /databases/{database}/documents {\n${content}\n}`),
