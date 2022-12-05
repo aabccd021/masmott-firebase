@@ -31,8 +31,9 @@ connectStorageEmulator(getStorage(app), emulatorHost, 9199);
 connectFirestoreEmulator(getFirestore(app), emulatorHost, firestorePort);
 
 // https://firebase.google.com/docs/emulator-suite/connect_storage#admin_sdks
-const adminApp = admin.initializeApp({ projectId: conf.projectId });
-const bucket = admin.storage(adminApp).bucket(conf.storageBucket);
+const adminConfig = { projectId: conf.projectId };
+const adminApp = admin.initializeApp(adminConfig);
+const bucket = adminApp.storage().bucket(conf.storageBucket);
 
 const clearStorage = pipe(
   taskEither.tryCatch(() => bucket.getFiles(), identity),
@@ -65,7 +66,11 @@ const mkTestClientEnv = pipe(
   clearStorage,
   taskEither.chainW(() => clearFirestore),
   taskEither.chainW(() => clearAuth),
-  taskEither.map(() => ({ client: { firebaseConfig: conf }, server: undefined, ci: undefined }))
+  taskEither.map(() => ({
+    client: { firebaseConfig: conf },
+    server: { firebaseAdminApp: adminApp },
+    ci: undefined,
+  }))
 );
 
 runTests<StackType>(stack, mkTestClientEnv);

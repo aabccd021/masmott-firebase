@@ -2,6 +2,7 @@ import { summonFor } from '@morphic-ts/batteries/lib/summoner-ESBST';
 import type { AType } from '@morphic-ts/summoners/lib';
 import { makeTagged } from '@morphic-ts/summoners/lib';
 import type { FirebaseOptions } from 'firebase/app';
+import type * as admin from 'firebase-admin';
 import type { StackWithEnv } from 'masmott';
 
 const { summon } = summonFor({});
@@ -29,7 +30,9 @@ export type StackType = {
     readonly client: {
       readonly firebaseConfig: FirebaseOptions;
     };
-    readonly server: undefined;
+    readonly server: {
+      readonly firebaseAdminApp: admin.app.App;
+    };
     readonly ci: undefined;
   };
 };
