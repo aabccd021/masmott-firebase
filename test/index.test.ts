@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { connectAuthEmulator, getAuth } from 'firebase/auth';
+import { connectAuthEmulator, getAuth, signOut } from 'firebase/auth';
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore/lite';
 import { connectStorageEmulator, getStorage } from 'firebase/storage';
 import * as admin from 'firebase-admin';
@@ -62,10 +62,13 @@ const clearAuth = taskEither.tryCatch(
   identity
 );
 
+const signOutClient = taskEither.tryCatch(() => signOut(getAuth(app)), identity);
+
 const mkTestClientEnv = pipe(
   clearStorage,
   taskEither.chainW(() => clearFirestore),
   taskEither.chainW(() => clearAuth),
+  taskEither.chainW(() => signOutClient),
   taskEither.map(() => ({
     client: { firebaseConfig: conf },
     server: { firebaseAdminApp: adminApp },
