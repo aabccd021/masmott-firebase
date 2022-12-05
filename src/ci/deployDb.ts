@@ -11,8 +11,7 @@ const getRuleStr = (rule: StackT.ci.DeployDb.True | undefined) =>
   pipe(
     option.fromNullable(rule),
     option.map(() => 'true'),
-    option.map((content) => `\n        allow get: if ${content};`),
-    option.getOrElseW(() => '')
+    option.map((content) => `\n      allow get: if ${content};`)
   );
 
 const equalRuleStr = (collectionName: string, comparable: StackT.ci.DeployDb.Comparable[0]) =>
@@ -37,23 +36,20 @@ const createRuleStr = (
         .with(
           { type: 'Equal' },
           ({ compare: [lhs, rhs] }) =>
-            `\n${equalRuleStr(collectionName, lhs)} == ${equalRuleStr(collectionName, rhs)}`
+            `${equalRuleStr(collectionName, lhs)} == ${equalRuleStr(collectionName, rhs)}`
         )
         .exhaustive()
     ),
-    option.map((content) => `\n       allow create: if ${content};`),
-    option.getOrElseW(() => '')
+    option.map((content) => `\n     allow create: if ${content};`)
   );
 
-const collectionRuleStr = (collectionName: string, content: string) =>
-  `\n      match /${collectionName}/{documentId} {\n${content}\n      } `;
+const collectionRuleStr = (collectionName: string) => (content: string) =>
+  `\n    match /${collectionName}/{documentId} {\n${content}\n      } `;
 
 const allRuleStr = (content: string) => `
 rules_version = '2';
 service cloud.firestore {
-  match /databases/{database}/documents {
 ${content}
-  }
 }
 `;
 
@@ -61,15 +57,22 @@ const getFirestoreRuleStr = (rules: StackT.ci.DeployDb.Param): string =>
   pipe(
     rules,
     readonlyRecord.mapWithIndex((collectionName, collectionRule) =>
-      collectionRuleStr(
-        collectionName,
-        getRuleStr(collectionRule.securityRule?.get) +
-          createRuleStr(collectionName, collectionRule.securityRule?.create)
+      pipe(
+        readonlyArray.sequence(option.Applicative)([
+          getRuleStr(collectionRule.securityRule?.get),
+          createRuleStr(collectionName, collectionRule.securityRule?.create),
+        ]),
+        option.map(std.readonlyArray.join('\n')),
+        option.map(collectionRuleStr(collectionName))
       )
     ),
     readonlyRecord.toReadonlyArray,
-    readonlyArray.map(readonlyTuple.snd),
-    std.readonlyArray.join('\n'),
+    readonlyArray.traverse(option.Applicative)(readonlyTuple.snd),
+    option.map(std.readonlyArray.join('\n')),
+    option.map((content) => `  match /databases/{database}/documents {\n${content}\n}`),
+    option.getOrElseW(
+      () => '  match /{document=**} { \n      allow read, write: if false; \n    }'
+    ),
     allRuleStr
   );
 
