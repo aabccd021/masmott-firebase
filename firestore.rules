@@ -6,6 +6,6 @@ service cloud.firestore {
     match /detection/{documentId} {
 
       allow get: if true;
-      } 
-}
+    } 
+  }
 }
