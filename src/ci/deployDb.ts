@@ -14,14 +14,10 @@ const getRuleStr = (rule: StackT.ci.DeployDb.True | undefined) =>
     option.map((content) => `\n      allow get: if ${content};`)
   );
 
-const equalRuleStr = (collectionName: string, comparable: StackT.ci.DeployDb.Comparable[0]) =>
+const equalRuleStr = (_collectionName: string, comparable: StackT.ci.DeployDb.Comparable[0]) =>
   match(comparable)
     .with({ type: 'AuthUid' }, () => 'request.auth.uid')
-    .with(
-      { type: 'DocumentField' },
-      ({ fieldName }) =>
-        `get(/databases/$(database)/documents/${collectionName}/$(resource.id)).data.${fieldName}`
-    )
+    .with({ type: 'DocumentField' }, ({ fieldName }) => `request.resource.data.${fieldName}`)
     .exhaustive();
 
 const createRuleStr = (
