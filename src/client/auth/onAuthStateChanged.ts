@@ -14,14 +14,5 @@ export const onAuthStateChanged: Type = (env) => (onChangeCallback) =>
     initializeApp,
     getAuth,
     (auth) => () =>
-      _onAuthStateChanged(
-        auth,
-        flow(
-          option.fromNullable,
-          option.chain((user) => option.fromNullable(user.uid)),
-          option.map((uid) => ({ uid })),
-          onChangeCallback,
-          std.io.execute
-        )
-      )
+      _onAuthStateChanged(auth, flow(option.fromNullable, onChangeCallback, std.io.execute))
   );
