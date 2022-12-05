@@ -84,13 +84,7 @@ const getFirestoreRuleStr = (rules: StackT.ci.DeployDb.Param): string =>
 export const deployDb: Stack['ci']['deployDb'] = () => (rules) =>
   pipe(
     taskEither.tryCatch(
-      () => {
-        // eslint-disable-next-line functional/no-expression-statement
-        console.log(JSON.stringify(rules));
-        // eslint-disable-next-line functional/no-expression-statement
-        console.log(getFirestoreRuleStr(rules));
-        return fs.writeFile('firestore.rules', getFirestoreRuleStr(rules));
-      },
+      () => fs.writeFile('firestore.rules', getFirestoreRuleStr(rules)),
       (value) => ({ code: 'ProviderError', value })
     ),
     taskEither.chainTaskK(() => std.task.sleep(std.date.mkMilliseconds(250))),
