@@ -48,14 +48,14 @@ const createSchemaRuleStr = (schema: StackT.ci.DeployDb.Schema): Option<string> 
     readonlyRecord.toReadonlyArray,
     readonlyArray.map(readonlyTuple.snd),
     option.fromPredicate(readonlyArray.isNonEmpty),
-    option.map(std.readonlyArray.join('\n     && '))
+    option.map(std.readonlyArray.join('\n        && '))
   );
 
 const createRuleStr = (conf: StackT.ci.DeployDb.CollectionConfig) =>
   pipe(
     [createSecurityRuleStr(conf.securityRule?.create), createSchemaRuleStr(conf.schema)],
     readonlyArray.sequence(option.Applicative),
-    option.map(std.readonlyArray.join('\n     && ')),
+    option.map(std.readonlyArray.join('\n        && ')),
     option.map((content) => `\n      allow create: if ${content};`)
   );
 
