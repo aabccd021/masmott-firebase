@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged as _onAuthStateChanged } from 'firebase/auth';
-import { console, io, option } from 'fp-ts';
+import { option } from 'fp-ts';
 import { flow, pipe } from 'fp-ts/function';
 import * as std from 'fp-ts-std';
 
@@ -20,11 +20,7 @@ export const onAuthStateChanged: Type = (env) => (onChangeCallback) =>
           option.fromNullable,
           option.chain((user) => option.fromNullable(user.uid)),
           option.map((uid) => ({ uid })),
-          (authState) =>
-            pipe(
-              onChangeCallback(authState),
-              io.chainFirst(() => console.log(authState))
-            ),
+          onChangeCallback,
           std.io.execute
         )
       )
