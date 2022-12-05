@@ -30,6 +30,7 @@ const createRuleStr = (
 ) =>
   pipe(
     option.fromNullable(nullableRule),
+
     option.map((rule) =>
       match(rule)
         .with({ type: 'True' }, () => 'true')
@@ -40,6 +41,7 @@ const createRuleStr = (
         )
         .exhaustive()
     ),
+
     option.map((content) => `\n     allow create: if ${content};`)
   );
 
@@ -58,16 +60,18 @@ const getFirestoreRuleStr = (rules: StackT.ci.DeployDb.Param): string =>
     rules,
     readonlyRecord.mapWithIndex((collectionName, collectionRule) =>
       pipe(
-        readonlyArray.sequence(option.Applicative)([
+        [
           getRuleStr(collectionRule.securityRule?.get),
           createRuleStr(collectionName, collectionRule.securityRule?.create),
-        ]),
-        option.map(std.readonlyArray.join('\n')),
-        option.map(collectionRuleStr(collectionName))
+        ],
+        readonlyArray.compact,
+        std.readonlyArray.join('\n'),
+        collectionRuleStr(collectionName)
       )
     ),
     readonlyRecord.toReadonlyArray,
-    readonlyArray.traverse(option.Applicative)(readonlyTuple.snd),
+    readonlyArray.map(readonlyTuple.snd),
+    option.fromPredicate(readonlyArray.isNonEmpty),
     option.map(std.readonlyArray.join('\n')),
     option.map((content) => `  match /databases/{database}/documents {\n${content}\n}`),
     option.getOrElseW(
@@ -80,6 +84,8 @@ export const deployDb: Stack['ci']['deployDb'] = () => (rules) =>
   pipe(
     taskEither.tryCatch(
       () => {
+        // eslint-disable-next-line functional/no-expression-statement
+        console.log(JSON.stringify(rules));
         // eslint-disable-next-line functional/no-expression-statement
         console.log(getFirestoreRuleStr(rules));
         return fs.writeFile('firestore.rules', getFirestoreRuleStr(rules));
