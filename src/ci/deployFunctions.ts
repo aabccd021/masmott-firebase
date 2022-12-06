@@ -41,5 +41,5 @@ export const deployFunctions: Type = () => (p) =>
       },
       (details) => ({ code: 'FailedLoadingFunctions' as const, details })
     ),
-    taskEither.chainTaskK(() => sleepTest)
+    taskEither.chainTaskK(() => sleepTest(3000))
   );

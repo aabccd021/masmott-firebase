@@ -19,6 +19,6 @@ service firebase.storage {
 export const deployStorage: Stack['ci']['deployStorage'] = () => () =>
   pipe(
     () => fs.writeFile('storage.rules', getStorageRule(true), { encoding: 'utf8' }),
-    task.chainFirst(() => sleepTest),
+    task.chainFirst(() => sleepTest(3000)),
     taskEither.fromTask
   );

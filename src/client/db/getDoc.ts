@@ -19,7 +19,7 @@ export const getDoc: Stack['client']['db']['getDoc'] =
       getFirestore,
       (firestore) => doc(firestore, collection, id),
       taskEither.of,
-      taskEither.chainFirstTaskK(() => sleepTest),
+      taskEither.chainFirstTaskK(() => sleepTest(3000)),
       taskEither.chain((docRef) =>
         taskEither.tryCatch(
           () => _getDoc(docRef),
