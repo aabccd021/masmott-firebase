@@ -1,8 +1,9 @@
-import { execSync } from 'child_process';
+import { exec } from 'child_process';
 import { taskEither } from 'fp-ts';
 import { pipe } from 'fp-ts/function';
 import * as std from 'fp-ts-std';
 import * as fs from 'fs/promises';
+import { promisify } from 'util';
 
 import type { Stack } from '../type';
 
@@ -28,9 +29,11 @@ type Type = Stack['ci']['deployFunctions'];
 export const deployFunctions: Type = () => (p) =>
   pipe(
     taskEither.tryCatch(
-      () => fs.writeFile('functions/src/index.ts', fnsStr(p.functions), { encoding: 'utf8' }),
+      () =>
+        fs
+          .writeFile('functions/src/index.ts', fnsStr(p.functions), { encoding: 'utf8' })
+          .then(() => promisify(exec)('pnpm build', { cwd: 'functions' })),
       (details) => ({ code: 'FailedLoadingFunctions' as const, details })
     ),
-    taskEither.chainIOK(() => () => execSync('pnpm build', { cwd: 'functions' })),
-    taskEither.chainTaskK(() => std.task.sleep(std.date.mkMilliseconds(10000)))
+    taskEither.chainTaskK(() => std.task.sleep(std.date.mkMilliseconds(100)))
   );

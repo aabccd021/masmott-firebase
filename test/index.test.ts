@@ -5,7 +5,6 @@ import { connectStorageEmulator, getStorage } from 'firebase/storage';
 import * as admin from 'firebase-admin';
 import { readonlyArray, taskEither } from 'fp-ts';
 import { identity, pipe } from 'fp-ts/function';
-// import * as std from 'fp-ts-std';
 import * as fs from 'fs/promises';
 import { runTests } from 'masmott/dist/cjs/test';
 import fetch from 'node-fetch';
@@ -66,11 +65,9 @@ const clearAuth = taskEither.tryCatch(
 
 const signOutClient = taskEither.tryCatch(() => signOut(getAuth(app)), identity);
 
-export const clearFunctions = pipe(
-  taskEither.tryCatch(
-    () => fs.writeFile('functions/lib/index.js', '', { encoding: 'utf8' }),
-    (details) => ({ code: 'FailedLoadingFunctions' as const, details })
-  )
+export const clearFunctions = taskEither.tryCatch(
+  () => fs.rm('functions/lib', { recursive: true, force: true }),
+  identity
 );
 
 const mkTestClientEnv = pipe(
@@ -78,7 +75,7 @@ const mkTestClientEnv = pipe(
   taskEither.chainW(() => clearFirestore),
   taskEither.chainW(() => clearAuth),
   taskEither.chainW(() => signOutClient),
-  // taskEither.chainW(() => clearFunctions),
+  taskEither.chainIOK(() => clearFunctions),
   taskEither.map(() => ({
     client: { firebaseConfig: conf },
     server: { firebaseAdminApp: adminApp },
