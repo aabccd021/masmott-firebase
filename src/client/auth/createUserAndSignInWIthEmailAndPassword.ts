@@ -6,6 +6,7 @@ import { match } from 'ts-pattern';
 
 import type { Stack } from '../../type';
 import { CodedError } from '../../type';
+import { sleepTest } from '../../util';
 
 type Type = Stack['client']['auth']['createUserAndSignInWithEmailAndPassword'];
 
@@ -14,19 +15,24 @@ const handleUnknownError = (value: unknown) => ({ code: 'ProviderError' as const
 export const createUserAndSignInWithEmailAndPassword: Type =
   (env) =>
   ({ email, password }) =>
-    pipe(env.firebaseConfig, initializeApp, getAuth, (auth) =>
-      taskEither.tryCatch(
-        () => createUserWithEmailAndPassword(auth, email, password).then(() => undefined),
-        flow(
-          CodedError.type.decode,
-          either.bimap(handleUnknownError, (codedError) =>
-            match(codedError)
-              .with({ code: 'auth/email-already-in-use' }, () => ({
-                code: 'EmailAlreadyInUse' as const,
-              }))
-              .otherwise(handleUnknownError)
-          ),
-          either.toUnion
-        )
-      )
+    pipe(
+      env.firebaseConfig,
+      initializeApp,
+      getAuth,
+      (auth) =>
+        taskEither.tryCatch(
+          () => createUserWithEmailAndPassword(auth, email, password).then(() => undefined),
+          flow(
+            CodedError.type.decode,
+            either.bimap(handleUnknownError, (codedError) =>
+              match(codedError)
+                .with({ code: 'auth/email-already-in-use' }, () => ({
+                  code: 'EmailAlreadyInUse' as const,
+                }))
+                .otherwise(handleUnknownError)
+            ),
+            either.toUnion
+          )
+        ),
+      taskEither.chainTaskK(() => sleepTest(5000))
     );

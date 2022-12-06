@@ -18,7 +18,7 @@ import { ${exportName} as fns } from '${path}';
 
 const readerS = apply.sequenceS(reader.Apply);
 
-export const ${exportName} = pipe(
+export const masmottFunctions = pipe(
   { firebaseAdminApp: admin.initializeApp({ projectId: 'demo' }) },
   readerS({ db: readerS(stack.server.db) }),
   fns,
@@ -41,5 +41,5 @@ export const deployFunctions: Type = () => (p) =>
       },
       (details) => ({ code: 'FailedLoadingFunctions' as const, details })
     ),
-    taskEither.chainTaskK(() => sleepTest(1500))
+    taskEither.chainTaskK(() => sleepTest(5000))
   );

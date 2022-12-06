@@ -8,7 +8,7 @@ import { test3Functions as fns } from '/home/aabccd021/ghq/github.com/aabccd021/
 
 const readerS = apply.sequenceS(reader.Apply);
 
-export const test3Functions = pipe(
+export const masmottFunctions = pipe(
   { firebaseAdminApp: admin.initializeApp({ projectId: 'demo' }) },
   readerS({ db: readerS(stack.server.db) }),
   fns,
