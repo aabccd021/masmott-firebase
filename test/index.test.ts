@@ -5,7 +5,6 @@ import { connectStorageEmulator, getStorage } from 'firebase/storage';
 import * as admin from 'firebase-admin';
 import { readonlyArray, taskEither } from 'fp-ts';
 import { identity, pipe } from 'fp-ts/function';
-import { existsSync } from 'fs';
 import * as fs from 'fs/promises';
 import { runTests } from 'masmott/dist/cjs/test';
 import fetch from 'node-fetch';
@@ -68,15 +67,10 @@ const clearAuth = taskEither.tryCatch(
 
 const signOutClient = taskEither.tryCatch(() => signOut(getAuth(app)), identity);
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-export const clearFunctions = taskEither.tryCatch(async () => {
-  // eslint-disable-next-line functional/no-conditional-statement
-  if (existsSync('functions/lib')) {
-    await fs.rm('functions/lib', { recursive: true, force: true });
-    await sleep(1000);
-  }
-}, identity);
+export const clearFunctions = taskEither.tryCatch(
+  () => fs.rm('functions/lib', { recursive: true, force: true }),
+  identity
+);
 
 const mkTestClientEnv = pipe(
   clearStorage,
