@@ -11,14 +11,14 @@ specifiers:
   firebase-admin: ^11.3.0
   firebase-functions: ^4.1.0
   firebase-functions-test: ^0.2.0
-  masmott: ^1.13.1
+  masmott: ^1.13.2
   masmott-firebase: link:..
   typescript: ^4.5.4
 
 dependencies:
   firebase-admin: 11.3.0
   firebase-functions: 4.1.0_firebase-admin@11.3.0
-  masmott: 1.13.1
+  masmott: 1.13.2_typescript@4.9.3
   masmott-firebase: link:..
 
 devDependencies:
@@ -2516,8 +2516,8 @@ packages:
     hasBin: true
     optional: true
 
-  /masmott/1.13.1:
-    resolution: {integrity: sha512-Fva9TcDGiEty79v8dYt2h4MGLN0yZPbkzg8PQXpVqisW2wDbuBGYu9Iv6yZByOUBFAPS6HspAETT2N/9bM5IlQ==}
+  /masmott/1.13.2_typescript@4.9.3:
+    resolution: {integrity: sha512-kcpAiCqpd32aHstvspl2C+R9wWkjOK+0vlzNrT454ttwJBjR5DUdFBK38FcuIBNx02JRkf7AVWnZbQsTRxQgjg==}
     hasBin: true
     dependencies:
       '@morphic-ts/batteries': 3.0.0_fp-ts@2.13.1+io-ts@2.2.20
@@ -2528,6 +2528,7 @@ packages:
       make-union-morphic-ts: 1.0.7_tkkhkw7abvjyxavu6h6oqh543q
       next: 13.0.6
       node-fetch: 3.3.0
+      ts-essentials: 9.3.0_typescript@4.9.3
       valid-data-url: 4.0.1
     transitivePeerDependencies:
       - '@babel/core'
@@ -2543,6 +2544,7 @@ packages:
       - react
       - react-dom
       - sass
+      - typescript
     dev: false
 
   /mdurl/1.0.1:
@@ -3275,6 +3277,14 @@ packages:
   /tr46/0.0.3:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
 
+  /ts-essentials/9.3.0_typescript@4.9.3:
+    resolution: {integrity: sha512-XeiCboEyBG8UqXZtXl59bWEi4ZgOqRsogFDI6WDGIF1LmzbYiAkIwjkXN6zZWWl4re/lsOqMlYfe8KA0XiiEPw==}
+    peerDependencies:
+      typescript: '>=4.1.0'
+    dependencies:
+      typescript: 4.9.3
+    dev: false
+
   /tsconfig-paths/3.14.1:
     resolution: {integrity: sha512-fxDhWnFSLt3VuTwtvJt5fpwxBHg5AdKWMsgcPOOIilyjymcYVZoCQF8fvFRezCNfblEXmi+PcM1eYHeOAgXCOQ==}
     dependencies:
@@ -3331,7 +3341,6 @@ packages:
     resolution: {integrity: sha512-CIfGzTelbKNEnLpLdGFgdyKhG23CKdKgQPOBc+OUNrkJ2vr+KSzsSV5kq5iWhEQbok+quxgGzrAtGWCyU7tHnA==}
     engines: {node: '>=4.2.0'}
     hasBin: true
-    dev: true
 
   /uc.micro/1.0.6:
     resolution: {integrity: sha512-8Y75pvTYkLJW2hWQHXxoqRgV7qb9B+9vFEtidML+7koHUFapnVJAZ6cKs+Qjz5Aw3aZWHMC6u0wJE3At+nSGwA==}

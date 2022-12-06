@@ -12,7 +12,7 @@ specifiers:
   firebase-tools: ^11.16.1
   fp-ts: ^2.13.1
   fp-ts-std: ^0.15.1
-  masmott: ^1.13.1
+  masmott: ^1.13.2
   nazna: ^1.14.2
   node-fetch: ^3.3.0
   pnpm: ^7.14.2
@@ -30,7 +30,7 @@ dependencies:
   firebase-functions: 4.1.0_firebase-admin@11.3.0
   fp-ts: 2.13.1
   fp-ts-std: 0.15.1_sddbbwftoqt3d5g3p7ix53ouca
-  masmott: 1.13.1_kixo5cxu52ko4m4jmafj3jiow4
+  masmott: 1.13.2_xbpvxrvmp5lyzipg7btlnwttfi
   ts-pattern: 4.0.6
 
 devDependencies:
@@ -5939,8 +5939,8 @@ packages:
     engines: {node: '>= 12'}
     hasBin: true
 
-  /masmott/1.13.1_kixo5cxu52ko4m4jmafj3jiow4:
-    resolution: {integrity: sha512-Fva9TcDGiEty79v8dYt2h4MGLN0yZPbkzg8PQXpVqisW2wDbuBGYu9Iv6yZByOUBFAPS6HspAETT2N/9bM5IlQ==}
+  /masmott/1.13.2_xbpvxrvmp5lyzipg7btlnwttfi:
+    resolution: {integrity: sha512-kcpAiCqpd32aHstvspl2C+R9wWkjOK+0vlzNrT454ttwJBjR5DUdFBK38FcuIBNx02JRkf7AVWnZbQsTRxQgjg==}
     hasBin: true
     dependencies:
       '@morphic-ts/batteries': 3.0.0_ljogjlciannwm3nucb2c2w5a34
@@ -5951,6 +5951,7 @@ packages:
       make-union-morphic-ts: 1.0.7_tkkhkw7abvjyxavu6h6oqh543q
       next: 13.0.4_biqbaboplfbrettd7655fr4n2y
       node-fetch: 3.3.0
+      ts-essentials: 9.3.0_typescript@4.9.3
       valid-data-url: 4.0.1
     transitivePeerDependencies:
       - '@babel/core'
@@ -5966,6 +5967,7 @@ packages:
       - react
       - react-dom
       - sass
+      - typescript
     dev: false
 
   /mdurl/1.0.1:
@@ -8223,6 +8225,14 @@ packages:
     resolution: {integrity: sha512-XrHUvV5HpdLmIj4uVMxHggLbFSZYIn7HEWsqePZcI50pco+MPqJ50wMGY794X7AOOhxOBAjbkqfAbEe/QMp2Lw==}
     dev: true
 
+  /ts-essentials/9.3.0_typescript@4.9.3:
+    resolution: {integrity: sha512-XeiCboEyBG8UqXZtXl59bWEi4ZgOqRsogFDI6WDGIF1LmzbYiAkIwjkXN6zZWWl4re/lsOqMlYfe8KA0XiiEPw==}
+    peerDependencies:
+      typescript: '>=4.1.0'
+    dependencies:
+      typescript: 4.9.3
+    dev: false
+
   /ts-pattern/4.0.6:
     resolution: {integrity: sha512-sFHQYD4KoysBi7e7a2mzDPvRBeqA4w+vEyRE+P5MU9VLq8eEYxgKCgD9RNEAT+itGRWUTYN+hry94GDPLb1/Yw==}
 
@@ -8328,7 +8338,6 @@ packages:
     resolution: {integrity: sha512-CIfGzTelbKNEnLpLdGFgdyKhG23CKdKgQPOBc+OUNrkJ2vr+KSzsSV5kq5iWhEQbok+quxgGzrAtGWCyU7tHnA==}
     engines: {node: '>=4.2.0'}
     hasBin: true
-    dev: true
 
   /uc.micro/1.0.6:
     resolution: {integrity: sha512-8Y75pvTYkLJW2hWQHXxoqRgV7qb9B+9vFEtidML+7koHUFapnVJAZ6cKs+Qjz5Aw3aZWHMC6u0wJE3At+nSGwA==}

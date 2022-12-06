@@ -3,7 +3,7 @@
   "scripts": {
     "lint": "eslint --ext .js,.ts .",
     "build": "rm -rf lib && pnpm build:cjs && pnpm build:types",
-    "build:cjs": "swc src --out-dir lib --source-maps --config module.type=commonjs",
+    "build": "swc src --out-dir lib --source-maps --config module.type=commonjs",
     "build:types": "tsc",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
@@ -18,7 +18,7 @@
   "dependencies": {
     "firebase-admin": "^11.3.0",
     "firebase-functions": "^4.1.0",
-    "masmott": "^1.13.1",
+    "masmott": "^1.13.2",
     "masmott-firebase": "link:.."
   },
   "devDependencies": {
