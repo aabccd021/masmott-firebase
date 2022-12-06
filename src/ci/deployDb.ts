@@ -1,4 +1,4 @@
-import { console, option, readonlyArray, readonlyRecord, readonlyTuple, taskEither } from 'fp-ts';
+import { option, readonlyArray, readonlyRecord, readonlyTuple, taskEither } from 'fp-ts';
 import { flow, pipe } from 'fp-ts/function';
 import type { Option } from 'fp-ts/Option';
 import * as std from 'fp-ts-std';
@@ -98,7 +98,6 @@ export const deployDb: Stack['ci']['deployDb'] = () => (rules) =>
       () => fs.writeFile('firestore.rules', getFirestoreRuleStr(rules)),
       (value) => ({ code: 'ProviderError', value })
     ),
-    taskEither.chainIOK(() => console.log(getFirestoreRuleStr(rules))),
     taskEither.chainTaskK(() => std.task.sleep(std.date.mkMilliseconds(1000))),
     taskEither.fromTask
   );

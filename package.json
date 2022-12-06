@@ -10,9 +10,10 @@
     "lint": "eslint . --max-warnings=0",
     "pre-push": "pnpm pre-push:dirty && pnpm publish --dry-run",
     "pre-push:dirty": "pnpm install && pnpm build && pnpm lint && pnpm test",
+    "install:functions": "cd functions && pnpm install",
     "test:types": "tsc --noEmit",
     "test:masmott": "firebase --project demo emulators:exec 'vitest --run --outputDiffLines 1000'",
-    "test": "pnpm test:types && pnpm test:masmott"
+    "test": "pnpm test:types && pnpm install:functions && pnpm test:masmott"
   },
   "dependencies": {
     "@morphic-ts/batteries": "^3.0.0",
