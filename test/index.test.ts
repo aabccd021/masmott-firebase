@@ -79,7 +79,7 @@ const mkTestClientEnv = pipe(
   taskEither.chainW(() => clearFirestore),
   taskEither.chainW(() => clearAuth),
   taskEither.chainW(() => signOutClient),
-  taskEither.chainTaskK(() => sleepTest(2000)),
+  taskEither.chainTaskK(() => sleepTest(7000)),
   taskEither.map(() => ({
     client: { firebaseConfig: conf },
     server: { firebaseAdminApp: adminApp },
