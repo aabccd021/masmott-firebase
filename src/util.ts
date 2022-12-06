@@ -1,3 +1,4 @@
 import * as std from 'fp-ts-std';
 
-export const sleepTest = (ms: number) => std.task.sleep(std.date.mkMilliseconds(ms));
+export const sleepTest = (ms: number) =>
+  std.task.sleep(std.date.mkMilliseconds(ms * parseFloat(process.env['TEST_DELAY'] ?? '1')));

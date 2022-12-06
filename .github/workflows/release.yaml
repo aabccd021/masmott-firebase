@@ -8,6 +8,9 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test_delay: ["0.25", "0.5", "0.75", "1.0", "1.25", "1.5", "1.75", "2.0"]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -45,6 +48,8 @@ jobs:
         run: pnpm lint
       - name: Test
         run: pnpm test
+        env:
+          TEST_DELAY: ${{ matrix.test_delay }}
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
