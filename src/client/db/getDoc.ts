@@ -6,7 +6,6 @@ import { match } from 'ts-pattern';
 
 import type { Stack } from '../../type';
 import { CodedError } from '../../type';
-import { sleepTest } from '../../util';
 
 const handleUnknownError = (value: unknown) => ({ code: 'ProviderError' as const, value });
 
@@ -19,7 +18,6 @@ export const getDoc: Stack['client']['db']['getDoc'] =
       getFirestore,
       (firestore) => doc(firestore, collection, id),
       taskEither.of,
-      taskEither.chainFirstTaskK(() => sleepTest(1500)),
       taskEither.chain((docRef) =>
         taskEither.tryCatch(
           () => _getDoc(docRef),
