@@ -106,6 +106,6 @@ export const deployDb: Stack['ci']['deployDb'] = () => (rules) =>
       },
       (value) => ({ code: 'ProviderError', value })
     ),
-    taskEither.chainTaskK(() => sleepTest(1000)),
+    taskEither.chainTaskK(() => sleepTest(750)),
     taskEither.fromTask
   );
