@@ -2,8 +2,9 @@
   "name": "functions",
   "scripts": {
     "lint": "eslint --ext .js,.ts .",
-    "build": "tsc",
-    "build:watch": "tsc --watch",
+    "build": "rm -rf lib && pnpm build:cjs && pnpm build:types",
+    "build:cjs": "swc src --out-dir lib --source-maps --config module.type=commonjs",
+    "build:types": "tsc",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
@@ -21,6 +22,8 @@
     "masmott-firebase": "link:.."
   },
   "devDependencies": {
+    "@swc/cli": "^0.1.57",
+    "@swc/core": "^1.3.21",
     "@typescript-eslint/eslint-plugin": "^5.12.0",
     "@typescript-eslint/parser": "^5.12.0",
     "eslint": "^8.9.0",
