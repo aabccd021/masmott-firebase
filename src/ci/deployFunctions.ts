@@ -8,21 +8,11 @@ import type { Stack } from '../type';
 import { sleepTest } from '../util';
 
 const fnsStr = ({ path, exportName }: { readonly path: string; readonly exportName: string }) => `
-import * as admin from 'firebase-admin';
-import { apply, reader } from 'fp-ts';
-import { pipe } from 'fp-ts/function';
-import { makeFunctions, stack } from 'masmott-firebase';
+import { env } from './masmott-firebase.server.config'
+import { makeFunctions } from 'masmott-firebase';
+import { ${exportName} as functionsBuilder } from '${path}';
 
-import { ${exportName} as fns } from '${path}';
-
-const readerS = apply.sequenceS(reader.Apply);
-
-export const masmottFunctions = pipe(
-  { firebaseAdminApp: admin.initializeApp({ projectId: 'demo' }) },
-  readerS({ db: readerS(stack.server.db) }),
-  fns,
-  makeFunctions
-);
+export const masmottFunctions = makeFunctions({ env, functionsBuilder })
 `;
 
 type Type = Stack['ci']['deployFunctions'];
