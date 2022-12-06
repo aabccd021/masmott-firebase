@@ -1,9 +1,9 @@
 import { task, taskEither } from 'fp-ts';
 import { pipe } from 'fp-ts/function';
-import * as std from 'fp-ts-std';
 import * as fs from 'fs/promises';
 
 import type { Stack } from '../type';
+import { sleepTest } from '../util';
 
 const getStorageRule = (allow: boolean) => `
 rules_version = '2';
@@ -19,6 +19,6 @@ service firebase.storage {
 export const deployStorage: Stack['ci']['deployStorage'] = () => () =>
   pipe(
     () => fs.writeFile('storage.rules', getStorageRule(true), { encoding: 'utf8' }),
-    task.chainFirst(() => std.task.sleep(std.date.mkMilliseconds(250))),
+    task.chainFirst(() => sleepTest),
     taskEither.fromTask
   );

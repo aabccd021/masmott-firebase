@@ -1,12 +1,13 @@
 import { option, readonlyArray, readonlyRecord, readonlyTuple, taskEither } from 'fp-ts';
+import * as std from 'fp-ts-std';
 import { flow, pipe } from 'fp-ts/function';
 import type { Option } from 'fp-ts/Option';
-import * as std from 'fp-ts-std';
 import * as fs from 'fs/promises';
 import type { Stack as StackT } from 'masmott';
 import { match } from 'ts-pattern';
 
 import type { Stack } from '../type';
+import { sleepTest } from '../util';
 
 const getRuleStr = (rule: StackT.ci.DeployDb.True | undefined) =>
   pipe(
@@ -95,9 +96,16 @@ const getFirestoreRuleStr = (rules: StackT.ci.DeployDb.Param): string =>
 export const deployDb: Stack['ci']['deployDb'] = () => (rules) =>
   pipe(
     taskEither.tryCatch(
-      () => fs.writeFile('firestore.rules', getFirestoreRuleStr(rules)),
+      async () => {
+        // eslint-disable-next-line functional/no-expression-statement
+        console.time('deployDb');
+        // eslint-disable-next-line functional/no-expression-statement
+        await fs.writeFile('firestore.rules', getFirestoreRuleStr(rules));
+        // eslint-disable-next-line functional/no-expression-statement
+        console.timeEnd('deployDb');
+      },
       (value) => ({ code: 'ProviderError', value })
     ),
-    taskEither.chainTaskK(() => std.task.sleep(std.date.mkMilliseconds(1000))),
+    taskEither.chainTaskK(() => sleepTest),
     taskEither.fromTask
   );

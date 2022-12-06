@@ -47,35 +47,42 @@ const clearStorage = pipe(
 );
 
 // https://firebase.google.com/docs/emulator-suite/connect_firestore#clear_your_database_between_tests
-const clearFirestore = taskEither.tryCatch(
-  () =>
-    fetch(
-      `http://${emulatorHost}:${firestorePort}/emulator/v1/projects/${conf.projectId}/databases/(default)/documents`,
-      { method: 'DELETE' }
-    ),
-  identity
-);
+const clearFirestore = taskEither.tryCatch(async () => {
+  console.time('clearFirestore');
+  await fetch(
+    `http://${emulatorHost}:${firestorePort}/emulator/v1/projects/${conf.projectId}/databases/(default)/documents`,
+    { method: 'DELETE' }
+  );
+  console.timeEnd('clearFirestore');
+}, identity);
 
 // https://firebase.google.com/docs/reference/rest/auth#section-auth-emulator-clearaccounts
-const clearAuth = taskEither.tryCatch(
-  () =>
-    fetch(`${authEndpoint}/emulator/v1/projects/${conf.projectId}/accounts`, { method: 'DELETE' }),
-  identity
-);
+const clearAuth = taskEither.tryCatch(async () => {
+  console.time('clearAuth');
+  await fetch(`${authEndpoint}/emulator/v1/projects/${conf.projectId}/accounts`, {
+    method: 'DELETE',
+  });
+  console.timeEnd('clearAuth');
+}, identity);
 
-const signOutClient = taskEither.tryCatch(() => signOut(getAuth(app)), identity);
+const signOutClient = taskEither.tryCatch(async () => {
+  console.time('signOutClient');
+  await signOut(getAuth(app));
+  console.timeEnd('signOutClient');
+}, identity);
 
-export const clearFunctions = taskEither.tryCatch(
-  () => fs.rm('functions/lib', { recursive: true, force: true }),
-  identity
-);
+export const clearFunctions = taskEither.tryCatch(async () => {
+  console.time('clearFunctions');
+  await fs.rm('functions/lib', { recursive: true, force: true });
+  console.timeEnd('clearFunctions');
+}, identity);
 
 const mkTestClientEnv = pipe(
   clearStorage,
   taskEither.chainW(() => clearFirestore),
   taskEither.chainW(() => clearAuth),
   taskEither.chainW(() => signOutClient),
-  taskEither.chainIOK(() => clearFunctions),
+  // taskEither.chainIOK(() => clearFunctions),
   taskEither.map(() => ({
     client: { firebaseConfig: conf },
     server: { firebaseAdminApp: adminApp },
