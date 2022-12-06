@@ -13,7 +13,7 @@ export const makeFunctions = (p: DeployFunctionParam) =>
         .with({ trigger: 'onAuthCreated' }, ({ handler }) =>
           firebaseFunctions.auth
             .user()
-            .onCreate((authUser) => pipe(handler({ authUser }), std.task.execute))
+            .onCreate((authUser) => pipe({ authUser }, handler, std.task.execute))
         )
         .exhaustive()
     )
