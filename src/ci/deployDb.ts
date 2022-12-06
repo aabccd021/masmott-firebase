@@ -1,7 +1,7 @@
 import { option, readonlyArray, readonlyRecord, readonlyTuple, taskEither } from 'fp-ts';
-import * as std from 'fp-ts-std';
 import { flow, pipe } from 'fp-ts/function';
 import type { Option } from 'fp-ts/Option';
+import * as std from 'fp-ts-std';
 import * as fs from 'fs/promises';
 import type { Stack as StackT } from 'masmott';
 import { match } from 'ts-pattern';
