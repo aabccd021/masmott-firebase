@@ -32,5 +32,5 @@ export const deployFunctions: Type = () => (p) =>
       (details) => ({ code: 'FailedLoadingFunctions' as const, details })
     ),
     taskEither.chainIOK(() => () => execSync('pnpm build', { cwd: 'functions' })),
-    taskEither.chainTaskK(() => std.task.sleep(std.date.mkMilliseconds(1000)))
+    taskEither.chainTaskK(() => std.task.sleep(std.date.mkMilliseconds(10000)))
   );
