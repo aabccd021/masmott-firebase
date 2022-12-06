@@ -1,3 +1,4 @@
+/* eslint-disable functional/no-expression-statement */
 import { exec } from 'child_process';
 import { taskEither } from 'fp-ts';
 import { pipe } from 'fp-ts/function';
@@ -29,11 +30,15 @@ type Type = Stack['ci']['deployFunctions'];
 export const deployFunctions: Type = () => (p) =>
   pipe(
     taskEither.tryCatch(
-      () =>
-        fs
-          .writeFile('functions/src/index.ts', fnsStr(p.functions), { encoding: 'utf8' })
-          .then(() => promisify(exec)('pnpm build', { cwd: 'functions' })),
+      async () => {
+        console.time('writeFile');
+        await fs.writeFile('functions/src/index.ts', fnsStr(p.functions), { encoding: 'utf8' });
+        console.timeEnd('writeFile');
+        console.time('pnpm build');
+        await promisify(exec)('pnpm build', { cwd: 'functions' });
+        console.timeEnd('pnpm build');
+      },
       (details) => ({ code: 'FailedLoadingFunctions' as const, details })
     ),
-    taskEither.chainTaskK(() => std.task.sleep(std.date.mkMilliseconds(100)))
+    taskEither.chainTaskK(() => std.task.sleep(std.date.mkMilliseconds(2000)))
   );
