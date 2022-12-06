@@ -99,6 +99,6 @@ export const deployDb: Stack['ci']['deployDb'] = () => (rules) =>
       (value) => ({ code: 'ProviderError', value })
     ),
     taskEither.chainIOK(() => console.log(getFirestoreRuleStr(rules))),
-    taskEither.chainTaskK(() => std.task.sleep(std.date.mkMilliseconds(250))),
+    taskEither.chainTaskK(() => std.task.sleep(std.date.mkMilliseconds(1000))),
     taskEither.fromTask
   );
