@@ -11,7 +11,6 @@ import fetch from 'node-fetch';
 
 import { stack } from '../src';
 import type { StackType } from '../src/type';
-import { sleepTest } from '../src/util';
 
 const conf = {
   projectId: 'demo',
@@ -80,11 +79,10 @@ export const clearFunctions = taskEither.tryCatch(async () => {
 
 const mkTestClientEnv = pipe(
   clearStorage,
-  taskEither.chainIOK(() => clearFunctions),
   taskEither.chainW(() => clearFirestore),
   taskEither.chainW(() => clearAuth),
   taskEither.chainW(() => signOutClient),
-  taskEither.chainTaskK(() => sleepTest),
+  // taskEither.chainIOK(() => clearFunctions),
   taskEither.map(() => ({
     client: { firebaseConfig: conf },
     server: { firebaseAdminApp: adminApp },

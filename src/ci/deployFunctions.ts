@@ -36,7 +36,7 @@ export const deployFunctions: Type = () => (p) =>
         console.timeEnd('writeFile');
         console.time('pnpm build');
         const a = await promisify(exec)('pnpm build', { cwd: 'functions' });
-        console.log(a);
+        console.log(a)
         console.timeEnd('pnpm build');
       },
       (details) => ({ code: 'FailedLoadingFunctions' as const, details })
