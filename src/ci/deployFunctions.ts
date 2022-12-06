@@ -38,5 +38,5 @@ export const deployFunctions: Type = () => (p) =>
           .then(() => promisify(exec)('pnpm build', { cwd: 'functions' })),
       (details) => ({ code: 'FailedLoadingFunctions' as const, details })
     ),
-    taskEither.chainTaskK(() => sleepTest(5000))
+    taskEither.chainTaskK(() => sleepTest(4000))
   );
