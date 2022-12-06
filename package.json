@@ -38,7 +38,7 @@
     "vitest": "^0.24.5"
   },
   "version": "0.0.0-semantic-release",
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/cjs/index.d.ts",
   "exports": {
     "require": "./dist/cjs/index.js",
     "import": "./dist/es6/index.js"
