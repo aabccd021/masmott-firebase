@@ -2,6 +2,6 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    testTimeout: 30000 * parseFloat(process.env['TEST_DELAY'] ?? '1'),
+    testTimeout: 60000 * parseFloat(process.env['TEST_DELAY'] ?? '1'),
   },
 });
