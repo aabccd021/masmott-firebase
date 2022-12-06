@@ -1,16 +1,9 @@
+import * as functions from "firebase-functions";
 
-import * as admin from 'firebase-admin';
-import { apply, reader } from 'fp-ts';
-import { pipe } from 'fp-ts/function';
-import { makeFunctions, stack } from 'masmott-firebase';
+// Start writing functions
+// https://firebase.google.com/docs/functions/typescript
 
-import { test3Functions as fns } from '/home/aabccd021/ghq/github.com/aabccd021/masmott-firebase/node_modules/.pnpm/masmott@1.13.2_xbpvxrvmp5lyzipg7btlnwttfi/node_modules/masmott/dist/cjs/test/functions.js';
-
-const readerS = apply.sequenceS(reader.Apply);
-
-export const masmottFunctions = pipe(
-  { firebaseAdminApp: admin.initializeApp({ projectId: 'demo' }) },
-  readerS({ db: readerS(stack.server.db) }),
-  fns,
-  makeFunctions
-);
+export const helloWorld = functions.https.onRequest((request, response) => {
+  functions.logger.info("Hello logs!", {structuredData: true});
+  response.send("Hello from Firebase!");
+});
