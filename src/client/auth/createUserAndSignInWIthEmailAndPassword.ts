@@ -34,5 +34,5 @@ export const createUserAndSignInWithEmailAndPassword: Type =
             either.toUnion
           )
         ),
-      taskEither.chainTaskK(() => sleepTest(7000))
+      taskEither.chainTaskK(() => sleepTest(3000))
     );

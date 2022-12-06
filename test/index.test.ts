@@ -5,13 +5,13 @@ import { connectStorageEmulator, getStorage } from 'firebase/storage';
 import * as admin from 'firebase-admin';
 import { readonlyArray, taskEither } from 'fp-ts';
 import { identity, pipe } from 'fp-ts/function';
+import { existsSync } from 'fs';
 import * as fs from 'fs/promises';
 import { runTests } from 'masmott/dist/cjs/test';
 import fetch from 'node-fetch';
 
 import { stack } from '../src';
 import type { StackType } from '../src/type';
-import { sleepTest } from '../src/util';
 
 const conf = {
   projectId: 'demo',
@@ -68,10 +68,15 @@ const clearAuth = taskEither.tryCatch(
 
 const signOutClient = taskEither.tryCatch(() => signOut(getAuth(app)), identity);
 
-export const clearFunctions = taskEither.tryCatch(
-  () => fs.rm('functions/lib', { recursive: true, force: true }),
-  identity
-);
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export const clearFunctions = taskEither.tryCatch(async () => {
+  // eslint-disable-next-line functional/no-conditional-statement
+  if (existsSync('functions/lib')) {
+    await fs.rm('functions/lib', { recursive: true, force: true });
+    await sleep(1000);
+  }
+}, identity);
 
 const mkTestClientEnv = pipe(
   clearStorage,
@@ -79,7 +84,6 @@ const mkTestClientEnv = pipe(
   taskEither.chainW(() => clearFirestore),
   taskEither.chainW(() => clearAuth),
   taskEither.chainW(() => signOutClient),
-  taskEither.chainTaskK(() => sleepTest(7000)),
   taskEither.map(() => ({
     client: { firebaseConfig: conf },
     server: { firebaseAdminApp: adminApp },
