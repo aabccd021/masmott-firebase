@@ -12,7 +12,7 @@ import {
   right,
   tryCatch,
 } from 'fp-ts/TaskEither';
-import type { Stack,  StackType,  AuthState, StackWithEnv   } from 'masmott';
+import type { AuthState, Stack, StackType, StackWithEnv } from 'masmott';
 import fetch from 'node-fetch';
 import { describe, expect, test as test_ } from 'vitest';
 
