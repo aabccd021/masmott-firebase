@@ -50,6 +50,5 @@
     "dist"
   ],
   "repository": "https://github.com/aabccd021/masmott-firebase.git",
-  "license": "MIT",
-  "bin": "./dist/cli.js"
+  "license": "MIT"
 }

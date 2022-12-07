@@ -3,7 +3,7 @@
   "scripts": {
     "lint": "eslint --ext .js,.ts .",
     "build": "rm -rf lib && pnpm build:cjs && pnpm build:types",
-    "build": "swc src --out-dir lib --source-maps --config module.type=commonjs",
+    "build:cjs": "swc src --out-dir lib --source-maps --config module.type=commonjs",
     "build:types": "tsc",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",

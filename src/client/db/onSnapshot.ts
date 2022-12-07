@@ -32,7 +32,10 @@ export const onSnapshot: Type = (env) => (param) =>
               }))
               .otherwise(handleUnknownError)
           ),
-          either.toUnion
+          either.toUnion,
+          either.left,
+          param.onChanged,
+          std.io.execute
         )
       )
   );
