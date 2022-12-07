@@ -9,7 +9,6 @@ import { connectStorageEmulator, getStorage } from 'firebase/storage';
 import * as admin from 'firebase-admin';
 import { readonlyArray, taskEither } from 'fp-ts';
 import { identity, pipe } from 'fp-ts/function';
-import { existsSync } from 'fs';
 import * as fs from 'fs/promises';
 import { runTests } from 'masmott/dist/cjs/test';
 import fetch from 'node-fetch';
@@ -75,12 +74,25 @@ const signOutClient = taskEither.tryCatch(() => signOut(getAuth(app)), identity)
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const noFn = `
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "masmottFunctions", {
+    enumerable: true,
+    get: function() {
+        return masmottFunctions;
+    }
+});
+var masmottFunctions = {};
+`;
+
 export const clearFunctions = taskEither.tryCatch(async () => {
-  // eslint-disable-next-line functional/no-conditional-statement
-  if (existsSync('functions/lib')) {
-    await fs.rm('functions/lib', { recursive: true, force: true });
-    await sleep(1000);
-  }
+  console.time('writeFile');
+  await fs.writeFile('functions/lib/index.js', noFn, { encoding: 'utf8' });
+  console.timeEnd('writeFile');
+  await sleep(1000);
 }, identity);
 
 const mkTestClientEnv = pipe(
