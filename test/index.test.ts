@@ -1,10 +1,15 @@
 import { initializeApp } from 'firebase/app';
 import { connectAuthEmulator, getAuth, signOut } from 'firebase/auth';
-import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore/lite';
+import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
+import {
+  connectFirestoreEmulator as connectFirestoreEmulatorLite,
+  getFirestore as getFirestoreLite,
+} from 'firebase/firestore/lite';
 import { connectStorageEmulator, getStorage } from 'firebase/storage';
 import * as admin from 'firebase-admin';
 import { readonlyArray, taskEither } from 'fp-ts';
 import { identity, pipe } from 'fp-ts/function';
+import { existsSync } from 'fs';
 import * as fs from 'fs/promises';
 import { runTests } from 'masmott/dist/cjs/test';
 import fetch from 'node-fetch';
@@ -29,6 +34,7 @@ const authEndpoint = `http://${emulatorHost}:9099`;
 const app = initializeApp(conf);
 connectAuthEmulator(getAuth(app), authEndpoint);
 connectStorageEmulator(getStorage(app), emulatorHost, 9199);
+connectFirestoreEmulatorLite(getFirestoreLite(app), emulatorHost, firestorePort);
 connectFirestoreEmulator(getFirestore(app), emulatorHost, firestorePort);
 
 // https://firebase.google.com/docs/emulator-suite/connect_storage#admin_sdks
@@ -67,10 +73,15 @@ const clearAuth = taskEither.tryCatch(
 
 const signOutClient = taskEither.tryCatch(() => signOut(getAuth(app)), identity);
 
-export const clearFunctions = taskEither.tryCatch(
-  () => fs.rm('functions/lib', { recursive: true, force: true }),
-  identity
-);
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export const clearFunctions = taskEither.tryCatch(async () => {
+  // eslint-disable-next-line functional/no-conditional-statement
+  if (existsSync('functions/lib')) {
+    await fs.rm('functions/lib', { recursive: true, force: true });
+    await sleep(1000);
+  }
+}, identity);
 
 const mkTestClientEnv = pipe(
   clearStorage,

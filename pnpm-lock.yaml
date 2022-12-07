@@ -12,7 +12,7 @@ specifiers:
   firebase-tools: ^11.16.1
   fp-ts: ^2.13.1
   fp-ts-std: ^0.15.1
-  masmott: ^1.13.2
+  masmott: ^1.14.0
   nazna: ^1.14.2
   node-fetch: ^3.3.0
   pnpm: ^7.14.2
@@ -30,7 +30,7 @@ dependencies:
   firebase-functions: 4.1.0_firebase-admin@11.3.0
   fp-ts: 2.13.1
   fp-ts-std: 0.15.1_sddbbwftoqt3d5g3p7ix53ouca
-  masmott: 1.13.2_xbpvxrvmp5lyzipg7btlnwttfi
+  masmott: 1.14.0_xbpvxrvmp5lyzipg7btlnwttfi
   ts-pattern: 4.0.6
 
 devDependencies:
@@ -700,8 +700,8 @@ packages:
       - supports-color
     dev: true
 
-  /@google-cloud/storage/6.7.0:
-    resolution: {integrity: sha512-iEit3dvUhGQV3pPC8aci/Y+F6K2QJ/UvcXhymj8gnO8IYQfZSZvFf361yX4BWNUlbHzanUQVQdF9RvgEM8fwpw==}
+  /@google-cloud/storage/6.8.0:
+    resolution: {integrity: sha512-eRGsHrhVA7NORehYW9jLUWHRzYqFxbYiG3LQL50ZhjMekDwzhPKUQ7wbjAji9OFcO3Mk8jeNHeWdpAc/QZANCg==}
     engines: {node: '>=12'}
     requiresBuild: true
     dependencies:
@@ -4186,7 +4186,7 @@ packages:
       uuid: 9.0.0
     optionalDependencies:
       '@google-cloud/firestore': 6.4.1
-      '@google-cloud/storage': 6.7.0
+      '@google-cloud/storage': 6.8.0
     transitivePeerDependencies:
       - '@firebase/app-types'
       - encoding
@@ -5939,8 +5939,8 @@ packages:
     engines: {node: '>= 12'}
     hasBin: true
 
-  /masmott/1.13.2_xbpvxrvmp5lyzipg7btlnwttfi:
-    resolution: {integrity: sha512-kcpAiCqpd32aHstvspl2C+R9wWkjOK+0vlzNrT454ttwJBjR5DUdFBK38FcuIBNx02JRkf7AVWnZbQsTRxQgjg==}
+  /masmott/1.14.0_xbpvxrvmp5lyzipg7btlnwttfi:
+    resolution: {integrity: sha512-Cuuol4cUgOw7/3q74bMLe7eRyCA8JVGRhLi4DZ+CD+2d0qMzqGSMf32Ug2FDxlaB9v/gTXh7GMX2ePTYFBfm6Q==}
     hasBin: true
     dependencies:
       '@morphic-ts/batteries': 3.0.0_ljogjlciannwm3nucb2c2w5a34
