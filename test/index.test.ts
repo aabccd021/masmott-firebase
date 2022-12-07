@@ -89,9 +89,7 @@ var masmottFunctions = {};
 `;
 
 export const clearFunctions = taskEither.tryCatch(async () => {
-  console.time('writeFile');
   await fs.writeFile('functions/lib/index.js', noFn, { encoding: 'utf8' });
-  console.timeEnd('writeFile');
   await sleep(1000);
 }, identity);
 
