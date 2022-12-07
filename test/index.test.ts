@@ -1,10 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { connectAuthEmulator, getAuth, signOut } from 'firebase/auth';
-import {
-  clearIndexedDbPersistence,
-  connectFirestoreEmulator,
-  getFirestore,
-} from 'firebase/firestore';
+import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import {
   connectFirestoreEmulator as connectFirestoreEmulatorLite,
   getFirestore as getFirestoreLite,
@@ -76,11 +72,6 @@ const clearAuth = taskEither.tryCatch(
 
 const signOutClient = taskEither.tryCatch(() => signOut(getAuth(app)), identity);
 
-const clearFirestoreClient = taskEither.tryCatch(
-  () => clearIndexedDbPersistence(getFirestore(app)),
-  identity
-);
-
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const noFn = `
@@ -112,7 +103,6 @@ const mkTestClientEnv = pipe(
   taskEither.chainW(() => clearFirestore),
   taskEither.chainW(() => clearAuth),
   taskEither.chainW(() => signOutClient),
-  taskEither.chainW(() => clearFirestoreClient),
   taskEither.map(() => ({
     client: { firebaseConfig: conf },
     server: { firebaseAdminApp: adminApp },
