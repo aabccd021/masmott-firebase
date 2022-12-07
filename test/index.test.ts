@@ -89,8 +89,12 @@ var masmottFunctions = {};
 `;
 
 export const clearFunctions = taskEither.tryCatch(async () => {
-  await fs.writeFile('functions/lib/index.js', noFn, { encoding: 'utf8' });
-  await sleep(1000);
+  const content = await fs.readFile('functions/lib/index.js', { encoding: 'utf8' });
+  // eslint-disable-next-line functional/no-conditional-statement
+  if (content !== noFn) {
+    await fs.writeFile('functions/lib/index.js', noFn, { encoding: 'utf8' });
+    await sleep(1000);
+  }
 }, identity);
 
 const mkTestClientEnv = pipe(
