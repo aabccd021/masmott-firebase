@@ -11,12 +11,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        CLEANUP_DELAY: ["5000"]
-        DEPLOY_STORAGE_DELAY: ["5000"]
-        DEPLOY_FUNCTIONS_DELAY: ["20000"]
-        DEPLOY_DB_DELAY: ["5000"]
-        TIMEOUT_DELAY: ["120000"]
-        ITERATION: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        CLEANUP_DELAY: ["7000"]
+        DEPLOY_STORAGE_DELAY: ["7000"]
+        DEPLOY_FUNCTIONS_DELAY: ["30000"]
+        DEPLOY_DB_DELAY: ["7000"]
+        TIMEOUT_DELAY: ["180000"]
+        ITERATION: [1, 2, 3, 4, 5]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
