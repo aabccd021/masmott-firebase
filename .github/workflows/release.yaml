@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        SHARD: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        SHARD: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -49,7 +49,7 @@ jobs:
         run: pnpm lint
       - run: pnpm test:types
       - run: pnpm install:functions
-      - run: pnpm firebase --project demo emulators:exec "vitest --run --outputDiffLines 1000 --shard=${{ matrix.SHARD }}/10"
+      - run: pnpm firebase --project demo emulators:exec "vitest --run --outputDiffLines 1000 --shard=${{ matrix.SHARD }}/20"
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
