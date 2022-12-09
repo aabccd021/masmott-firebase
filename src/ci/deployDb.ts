@@ -7,7 +7,6 @@ import type { Stack as StackT } from 'masmott';
 import { match } from 'ts-pattern';
 
 import type { Stack } from '../type';
-import { sleepTest } from '../util';
 
 const getRuleStr = (rule: StackT.ci.DeployDb.True | undefined) =>
   pipe(
@@ -121,6 +120,10 @@ export const deployDb: Stack['ci']['deployDb'] = () => (rules) =>
       () => fs.writeFile('firestore.rules', getFirestoreRuleStr(rules)),
       (value) => ({ code: 'ProviderError', value })
     ),
-    taskEither.chainTaskK(() => sleepTest(1000)),
+    taskEither.chainTaskK(() =>
+      std.task.sleep(
+        std.date.mkMilliseconds(1000 * parseFloat(process.env['DEPLOY_DB_DELAY'] ?? '1'))
+      )
+    ),
     taskEither.fromTask
   );

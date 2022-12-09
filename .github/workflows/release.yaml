@@ -11,7 +11,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test_delay: ["1.5", "2.0", "2.25", "2.5", "2.75", "3.0", "3.5", "4.0"]
+        CLEANUP_DELAY: ["1000", "2000"]
+        DEPLOY_STORAGE_DELAY: ["1000", "2000"]
+        DEPLOY_FUNCTIONS_DELAY: ["5000", "10000"]
+        DEPLOY_DB_DELAY: ["1000", "2000"]
+        TIMEOUT_DELAY: ["20000", "40000"]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -37,7 +41,7 @@ jobs:
         with:
           path: ~/.cache/firebase/emulators
           key: >-
-            ${{ runner.os }}-firebase-emulators-${{
+            ${}-firebase-emulators-${{
             steps.firebase-cli-version.outputs.FIREBASE_CLI_VERSION }}
       - name: Build es6
         run: pnpm build:es6
@@ -50,7 +54,11 @@ jobs:
       - name: Test
         run: pnpm test
         env:
-          TEST_DELAY: ${{ matrix.test_delay }}
+          CLEANUP_DELAY: ${{ matrix.CLEANUP_DELAY }}
+          DEPLOY_STORAGE_DELAY: ${{ matrix.DEPLOY_STORAGE_DELAY }}
+          DEPLOY_FUNCTIONS_DELAY: ${{ matrix.DEPLOY_FUNCTIONS_DELAY }}
+          DEPLOY_DB_DELAY: ${{ matrix.DEPLOY_DB_DELAY }}
+          TIMEOUT_DELAY: ${{ matrix.TIMEOUT_DELAY }}
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

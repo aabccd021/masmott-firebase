@@ -1,11 +1,11 @@
 import { exec } from 'child_process';
 import { taskEither } from 'fp-ts';
 import { pipe } from 'fp-ts/function';
+import * as std from 'fp-ts-std';
 import * as fs from 'fs/promises';
 import { promisify } from 'util';
 
 import type { Stack } from '../type';
-import { sleepTest } from '../util';
 
 const fnsStr = ({ path, exportName }: { readonly path: string; readonly exportName: string }) => `
 import * as admin from 'firebase-admin';
@@ -42,5 +42,9 @@ export const deployFunctions: Type = () => (p) =>
         details,
       })
     ),
-    taskEither.chainTaskK(() => sleepTest(5000))
+    taskEither.chainTaskK(() =>
+      std.task.sleep(
+        std.date.mkMilliseconds(5000 * parseFloat(process.env['DEPLOY_FUNCTIONS_DELAY'] ?? '1'))
+      )
+    )
   );
