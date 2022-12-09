@@ -51,11 +51,11 @@ jobs:
       - run: pnpm install:functions
       - run: pnpm firebase --project demo emulators:exec "vitest --run --outputDiffLines 1000 --shard=${{ matrix.SHARD }}/10"
         env:
-          CLEANUP_DELAY: "2000"
-          DEPLOY_STORAGE_DELAY: "2000"
+          CLEANUP_DELAY: "1000"
+          DEPLOY_STORAGE_DELAY: "1000"
           DEPLOY_FUNCTIONS_DELAY: "10000"
-          DEPLOY_DB_DELAY: "2000"
-          TIMEOUT_DELAY: "90000"
+          DEPLOY_DB_DELAY: "1000"
+          TIMEOUT_DELAY: "70000"
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
