@@ -11,12 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        CLEANUP_DELAY: ["10000"]
-        DEPLOY_STORAGE_DELAY: ["10000"]
-        DEPLOY_FUNCTIONS_DELAY: ["60000"]
-        DEPLOY_DB_DELAY: ["10000"]
-        TIMEOUT_DELAY: ["300000"]
-        ITERATION: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        SHARD: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -54,13 +49,13 @@ jobs:
         run: pnpm lint
       - run: pnpm test:types
       - run: pnpm install:functions
-      - run: pnpm firebase --project demo emulators:exec "vitest --run --outputDiffLines 1000 --shard=${{ matrix.ITERATION }}/10"
+      - run: pnpm firebase --project demo emulators:exec "vitest --run --outputDiffLines 1000 --shard=${{ matrix.SHARD }}/10"
         env:
-          CLEANUP_DELAY: ${{ matrix.CLEANUP_DELAY }}
-          DEPLOY_STORAGE_DELAY: ${{ matrix.DEPLOY_STORAGE_DELAY }}
-          DEPLOY_FUNCTIONS_DELAY: ${{ matrix.DEPLOY_FUNCTIONS_DELAY }}
-          DEPLOY_DB_DELAY: ${{ matrix.DEPLOY_DB_DELAY }}
-          TIMEOUT_DELAY: ${{ matrix.TIMEOUT_DELAY }}
+          CLEANUP_DELAY: "3000"
+          DEPLOY_STORAGE_DELAY: "3000"
+          DEPLOY_FUNCTIONS_DELAY: "15000"
+          DEPLOY_DB_DELAY: "3000"
+          TIMEOUT_DELAY: "90000"
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
