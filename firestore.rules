@@ -3,7 +3,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    match /detection/{documentId} {
+    match /user/{documentId} {
 
       allow get: if true;
     } 

@@ -60,6 +60,24 @@ const createRuleStr = (conf: StackT.ci.DeployDb.CollectionConfig) =>
     option.map((content) => `\n      allow create: if ${content};`)
   );
 
+const updateSecurityRuleStr = (nullableRule: StackT.ci.DeployDb.UpdateRule | undefined) =>
+  pipe(
+    option.fromNullable(nullableRule),
+    option.map((rule) =>
+      match(rule)
+        .with({ type: 'True' }, () => 'true')
+        .exhaustive()
+    )
+  );
+
+const updateRuleStr = (conf: StackT.ci.DeployDb.CollectionConfig) =>
+  pipe(
+    [updateSecurityRuleStr(conf.securityRule?.update)],
+    readonlyArray.sequence(option.Applicative),
+    option.map(std.readonlyArray.join('\n        && ')),
+    option.map((content) => `\n      allow update: if ${content};`)
+  );
+
 const collectionRuleStr = (collectionName: string) => (content: string) =>
   `\n    match /${collectionName}/{documentId} {\n${content}\n    } `;
 
@@ -75,7 +93,11 @@ const getFirestoreRuleStr = (rules: StackT.ci.DeployDb.Param): string =>
     rules,
     readonlyRecord.mapWithIndex((collectionName, collectionRule) =>
       pipe(
-        [getRuleStr(collectionRule.securityRule?.get), createRuleStr(collectionRule)],
+        [
+          getRuleStr(collectionRule.securityRule?.get),
+          createRuleStr(collectionRule),
+          updateRuleStr(collectionRule),
+        ],
         readonlyArray.compact,
         option.fromPredicate(readonlyArray.isNonEmpty),
         option.map(flow(std.readonlyArray.join('\n'), collectionRuleStr(collectionName)))
