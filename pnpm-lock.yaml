@@ -9,10 +9,10 @@ specifiers:
   firebase: ^9.14.0
   firebase-admin: ^11.3.0
   firebase-functions: ^4.1.0
-  firebase-tools: ^11.16.1
+  firebase-tools: ^11.17.0
   fp-ts: ^2.13.1
   fp-ts-std: ^0.15.1
-  masmott: ^1.14.1
+  masmott: ^1.15.0
   nazna: ^1.14.2
   node-fetch: ^3.3.0
   pnpm: ^7.14.2
@@ -30,14 +30,14 @@ dependencies:
   firebase-functions: 4.1.0_firebase-admin@11.3.0
   fp-ts: 2.13.1
   fp-ts-std: 0.15.1_sddbbwftoqt3d5g3p7ix53ouca
-  masmott: 1.14.1_xbpvxrvmp5lyzipg7btlnwttfi
+  masmott: 1.15.0_xbpvxrvmp5lyzipg7btlnwttfi
   ts-pattern: 4.0.6
 
 devDependencies:
   '@swc/cli': 0.1.57_@swc+core@1.3.19
   '@swc/core': 1.3.19
   eslint: 8.28.0
-  firebase-tools: 11.16.1
+  firebase-tools: 11.17.0
   nazna: 1.14.2_tojcqitqsej7mw2r2egajeswxu
   node-fetch: 3.3.0
   pnpm: 7.17.0
@@ -4211,8 +4211,8 @@ packages:
       - supports-color
     dev: false
 
-  /firebase-tools/11.16.1:
-    resolution: {integrity: sha512-vi8NRUeeBXy7Be+Hk7DK0+ClF+snhjYa5s3fwPRYCGXbCX47E+jreahS6jXJIxeqMbHPmhPZrJXsy7Tdp1Ryug==}
+  /firebase-tools/11.17.0:
+    resolution: {integrity: sha512-ho0O57W9kEBCUCz/q5xScV0NE9dkSYZHQI3qTKb3Pc1ELvjcQChz9KRbLZc8pPjaxmRNeSwSFn2mOYetq33VDg==}
     engines: {node: ^14.18.0 || >=16.4.0}
     hasBin: true
     dependencies:
@@ -5939,8 +5939,8 @@ packages:
     engines: {node: '>= 12'}
     hasBin: true
 
-  /masmott/1.14.1_xbpvxrvmp5lyzipg7btlnwttfi:
-    resolution: {integrity: sha512-7GbspRv21yxJ72+XYL+pYto/jW1nrGmLMhSbzlFzE4jMb1YscVokSxTudHYfkK1IgoPFdI3x81ukC/I5nj9RQA==}
+  /masmott/1.15.0_xbpvxrvmp5lyzipg7btlnwttfi:
+    resolution: {integrity: sha512-cs2uebeB1h7B07YGumIWBwuPN8Q1mZ2lKbJwX0e0ItIBxHkOnfpyh9VXwDISZIQOgOggnYuS143rh+90QCwh0g==}
     hasBin: true
     dependencies:
       '@morphic-ts/batteries': 3.0.0_ljogjlciannwm3nucb2c2w5a34
@@ -5953,6 +5953,7 @@ packages:
       next: 13.0.4_biqbaboplfbrettd7655fr4n2y
       node-fetch: 3.3.0
       ts-essentials: 9.3.0_typescript@4.9.3
+      ts-pattern: 4.0.6
       valid-data-url: 4.0.1
     transitivePeerDependencies:
       - '@babel/core'

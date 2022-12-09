@@ -26,7 +26,8 @@ export const createUserAndSignInWithEmailAndPassword: Type =
               }))
               .otherwise(handleUnknownError)
           ),
-          either.toUnion
+          either.toUnion,
+          (err) => ({ ...err, capability: 'client.auth.createUserAndSignInWithEmailAndPassword' })
         )
       )
     );

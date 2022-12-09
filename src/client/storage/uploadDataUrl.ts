@@ -25,7 +25,8 @@ export const uploadDataUrl: Stack['client']['storage']['uploadDataUrl'] =
                 'storage/invalid-format': () => ({ code: 'InvalidDataUrlFormat' as const }),
               })
             ),
-            either.toUnion
+            either.toUnion,
+            (err) => ({ ...err, capability: 'client.storage.uploadDataUrl' })
           )
         )
     );

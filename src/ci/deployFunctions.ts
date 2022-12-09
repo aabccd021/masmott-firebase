@@ -36,7 +36,11 @@ export const deployFunctions: Type = () => (p) =>
             fs.writeFile('functions/src/index.ts', fnsStr(p.functions), { encoding: 'utf8' })
           )
           .then(() => promisify(exec)('pnpm build', { cwd: 'functions' })),
-      (details) => ({ code: 'FailedLoadingFunctions' as const, details })
+      (details) => ({
+        code: 'FailedLoadingFunctions' as const,
+        capability: 'ci.deployFunctions' as const,
+        details,
+      })
     ),
-    taskEither.chainTaskK(() => sleepTest(7000))
+    taskEither.chainTaskK(() => sleepTest(6000))
   );

@@ -99,6 +99,6 @@ export const deployDb: Stack['ci']['deployDb'] = () => (rules) =>
       () => fs.writeFile('firestore.rules', getFirestoreRuleStr(rules)),
       (value) => ({ code: 'ProviderError', value })
     ),
-    taskEither.chainTaskK(() => sleepTest(3000)),
+    taskEither.chainTaskK(() => sleepTest(1000)),
     taskEither.fromTask
   );

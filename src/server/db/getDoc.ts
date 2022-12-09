@@ -9,7 +9,11 @@ export const getDoc: Stack['server']['db']['getDoc'] =
     pipe(
       taskEither.tryCatch(
         () => env.firebaseAdminApp.firestore().doc(`${collection}/${id}`).get(),
-        (value) => ({ code: 'ProviderError' as const, value })
+        (value) => ({
+          code: 'ProviderError' as const,
+          value,
+          capability: 'server.db.getDoc' as const,
+        })
       ),
       taskEither.map((snapshot) => snapshot.data()),
       taskEither.map(option.fromNullable)

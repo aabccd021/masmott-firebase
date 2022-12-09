@@ -30,7 +30,8 @@ export const getDoc: Stack['client']['db']['getDoc'] =
                 }))
                 .otherwise(handleUnknownError)
             ),
-            either.toUnion
+            either.toUnion,
+            (err) => ({ ...err, capability: 'client.db.getDoc' as const })
           )
         )
       ),

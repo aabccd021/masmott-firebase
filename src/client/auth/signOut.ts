@@ -11,6 +11,10 @@ export const signOut: Type = (env) =>
   pipe(env.firebaseConfig, initializeApp, getAuth, (auth) =>
     taskEither.tryCatch(
       () => _signOut(auth),
-      (value) => ({ code: 'ProviderError' as const, value })
+      (value) => ({
+        code: 'ProviderError' as const,
+        capability: 'client.auth.signOut' as const,
+        value,
+      })
     )
   );

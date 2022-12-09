@@ -25,7 +25,8 @@ export const getDownloadUrl: Stack['client']['storage']['getDownloadUrl'] =
                 'storage/object-not-found': () => ({ code: 'FileNotFound' as const }),
               })
             ),
-            either.toUnion
+            either.toUnion,
+            (err) => ({ ...err, capability: 'client.storage.getDownloadUrl' })
           )
         )
     );
