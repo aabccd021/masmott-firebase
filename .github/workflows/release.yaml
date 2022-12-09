@@ -11,11 +11,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        CLEANUP_DELAY: ["1500"]
-        DEPLOY_STORAGE_DELAY: ["1500"]
-        DEPLOY_FUNCTIONS_DELAY: ["7500"]
-        DEPLOY_DB_DELAY: ["1500"]
-        TIMEOUT_DELAY: ["60000"]
         ITERATION: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     steps:
       - name: Checkout
@@ -55,11 +50,11 @@ jobs:
       - name: Test
         run: pnpm test
         env:
-          CLEANUP_DELAY: ${{ matrix.CLEANUP_DELAY }}
-          DEPLOY_STORAGE_DELAY: ${{ matrix.DEPLOY_STORAGE_DELAY }}
-          DEPLOY_FUNCTIONS_DELAY: ${{ matrix.DEPLOY_FUNCTIONS_DELAY }}
-          DEPLOY_DB_DELAY: ${{ matrix.DEPLOY_DB_DELAY }}
-          TIMEOUT_DELAY: ${{ matrix.TIMEOUT_DELAY }}
+          CLEANUP_DELAY: "2000"
+          DEPLOY_STORAGE_DELAY: "2000"
+          DEPLOY_FUNCTIONS_DELAY: "10000"
+          DEPLOY_DB_DELAY: "2000"
+          TIMEOUT_DELAY: "60000"
           ITERATION: ${{ matrix.ITERATION }}
       - name: Release
         env:
