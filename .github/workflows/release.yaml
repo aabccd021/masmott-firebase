@@ -16,7 +16,7 @@ jobs:
         DEPLOY_FUNCTIONS_DELAY: ["60000"]
         DEPLOY_DB_DELAY: ["10000"]
         TIMEOUT_DELAY: ["300000"]
-        ITERATION: [1, 2, 3, 4, 5]
+        ITERATION: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -52,15 +52,15 @@ jobs:
         run: pnpm build:types
       - name: Lint
         run: pnpm lint
-      - name: Test
-        run: pnpm test
+      - run: pnpm test:types
+      - run: pnpm install:functions
+      - run: firebase --project demo emulators:exec "vitest --run --outputDiffLines 1000 --shard=${{ matrix.ITERATION }}/10"
         env:
           CLEANUP_DELAY: ${{ matrix.CLEANUP_DELAY }}
           DEPLOY_STORAGE_DELAY: ${{ matrix.DEPLOY_STORAGE_DELAY }}
           DEPLOY_FUNCTIONS_DELAY: ${{ matrix.DEPLOY_FUNCTIONS_DELAY }}
           DEPLOY_DB_DELAY: ${{ matrix.DEPLOY_DB_DELAY }}
           TIMEOUT_DELAY: ${{ matrix.TIMEOUT_DELAY }}
-          ITERATION: ${{ matrix.ITERATION }}
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
