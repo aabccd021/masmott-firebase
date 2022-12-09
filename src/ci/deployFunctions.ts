@@ -44,7 +44,7 @@ export const deployFunctions: Type = () => (p) =>
     ),
     taskEither.chainTaskK(() =>
       std.task.sleep(
-        std.date.mkMilliseconds(parseFloat(process.env['DEPLOY_FUNCTIONS_DELAY'] ?? '5000'))
+        std.date.mkMilliseconds(parseFloat(process.env['DEPLOY_FUNCTIONS_DELAY'] ?? '10000'))
       )
     )
   );
