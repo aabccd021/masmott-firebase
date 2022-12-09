@@ -42,5 +42,5 @@ export const deployFunctions: Type = () => (p) =>
         details,
       })
     ),
-    taskEither.chainTaskK(() => sleepTest(6000))
+    taskEither.chainTaskK(() => sleepTest(5000))
   );
