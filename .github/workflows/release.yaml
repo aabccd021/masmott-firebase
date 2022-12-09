@@ -54,7 +54,7 @@ jobs:
         run: pnpm lint
       - run: pnpm test:types
       - run: pnpm install:functions
-      - run: firebase --project demo emulators:exec "vitest --run --outputDiffLines 1000 --shard=${{ matrix.ITERATION }}/10"
+      - run: pnpm firebase --project demo emulators:exec "vitest --run --outputDiffLines 1000 --shard=${{ matrix.ITERATION }}/10"
         env:
           CLEANUP_DELAY: ${{ matrix.CLEANUP_DELAY }}
           DEPLOY_STORAGE_DELAY: ${{ matrix.DEPLOY_STORAGE_DELAY }}
