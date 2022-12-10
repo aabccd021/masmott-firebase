@@ -20,11 +20,8 @@ jobs:
       - run: pnpm lint
       - run: pnpm test:types
 
-  test-without-functions:
+  test-serial:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        iteration: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.2.4
@@ -54,10 +51,46 @@ jobs:
         with:
           timeout_minutes: 10
           max_attempts: 3
-          command: pnpm test:without-functions
+          command: pnpm test:serial
+
+  test-parallel:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: pnpm
+      - run: pnpm install
+      - id: firebase-cli-version
+        shell: bash
+        run: >-
+          echo "FIREBASE_CLI_VERSION=$(pnpm list firebase-tools --parseable | tail -n 1 | cut -d '@'
+          -f2)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/firebase/emulators
+          key: >-
+            ${}-firebase-emulators-${{
+            steps.firebase-cli-version.outputs.FIREBASE_CLI_VERSION }}
+      - run: pnpm build:es6
+      - run: pnpm build:cjs
+      - run: pnpm build:types
+      - run: pnpm install:functions
+      - uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: pnpm firebase --project demo emulators:exec 'vitest --run parallel.test.ts --shard=${{ matrix.shard }}/10'
 
   release:
-    needs: [lint-and-typecheck, test-without-functions]
+    needs: [lint-and-typecheck, test-serial, test-parallel]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

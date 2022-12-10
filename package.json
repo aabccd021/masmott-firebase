@@ -12,9 +12,9 @@
     "pre-push:dirty": "pnpm install && pnpm build && pnpm lint && pnpm test",
     "install:functions": "cd functions && pnpm install",
     "test:types": "tsc --noEmit",
-    "test:with-functions": "firebase --project demo emulators:exec 'vitest --run with-functions.test.ts'",
-    "test:without-functions": "firebase --project demo emulators:exec 'vitest --run without-functions.test.ts'",
-    "test:masmott": "pnpm test:with-functions && pnpm test:without-functions",
+    "test:serial": "firebase --project demo emulators:exec 'vitest --run serial.test.ts'",
+    "test:parallel": "firebase --project demo emulators:exec 'vitest --run parallel.test.ts'",
+    "test:masmott": "pnpm test:serial && pnpm test:parallel",
     "test": "pnpm test:types && pnpm install:functions && pnpm test:masmott"
   },
   "dependencies": {
