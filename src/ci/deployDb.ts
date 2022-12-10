@@ -121,7 +121,7 @@ export const deployDb: Stack['ci']['deployDb'] = () => (rules) =>
       (value) => ({ code: 'ProviderError', value })
     ),
     taskEither.chainTaskK(() =>
-      std.task.sleep(std.date.mkMilliseconds(parseFloat(process.env['DEPLOY_DB_DELAY'] ?? '2000')))
+      std.task.sleep(std.date.mkMilliseconds(parseFloat(process.env['DEPLOY_DB_DELAY'] ?? '5000')))
     ),
     taskEither.fromTask
   );
