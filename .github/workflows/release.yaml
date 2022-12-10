@@ -54,9 +54,9 @@ jobs:
         env:
           ITERATION: ${{ matrix.ITERATION }}
           TIMEOUT_DELAY: "90000"
-          CLEANUP_DELAY: "1000"
-          DEPLOY_STORAGE_DELAY: "1000"
-          DEPLOY_DB_DELAY: "1000"
+          CLEANUP_DELAY: "3000"
+          DEPLOY_STORAGE_DELAY: "3000"
+          DEPLOY_DB_DELAY: "3000"
           DEPLOY_FUNCTIONS_DELAY: "30000"
 
   release:
