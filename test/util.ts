@@ -10,7 +10,7 @@ import * as admin from 'firebase-admin';
 import { readonlyArray, taskEither } from 'fp-ts';
 import { identity, pipe } from 'fp-ts/function';
 import * as fs from 'fs/promises';
-import { runTests } from 'masmott/dist/cjs/test';
+import { runSuiteWithConfig } from 'masmott/dist/cjs/test';
 import fetch from 'node-fetch';
 
 import { stack } from '../src';
@@ -88,7 +88,7 @@ Object.defineProperty(exports, "masmottFunctions", {
 var masmottFunctions = {};
 `;
 
-export const clearFunctions = taskEither.tryCatch(async () => {
+const clearFunctions = taskEither.tryCatch(async () => {
   const content = await fs.readFile('functions/lib/index.js', { encoding: 'utf8' });
   // eslint-disable-next-line functional/no-conditional-statement
   if (content !== noFn) {
@@ -97,17 +97,18 @@ export const clearFunctions = taskEither.tryCatch(async () => {
   }
 }, identity);
 
-const mkTestClientEnv = pipe(
-  clearStorage,
-  taskEither.chainIOK(() => clearFunctions),
-  taskEither.chainW(() => clearFirestore),
-  taskEither.chainW(() => clearAuth),
-  taskEither.chainW(() => signOutClient),
-  taskEither.map(() => ({
-    client: { firebaseConfig: conf },
-    server: { firebaseAdminApp: adminApp },
-    ci: undefined,
-  }))
-);
-
-runTests<StackType>(stack, mkTestClientEnv);
+export const runSuite = runSuiteWithConfig<StackType>({
+  stack,
+  getTestEnv: pipe(
+    clearStorage,
+    taskEither.chainIOK(() => clearFunctions),
+    taskEither.chainW(() => clearFirestore),
+    taskEither.chainW(() => clearAuth),
+    taskEither.chainW(() => signOutClient),
+    taskEither.map(() => ({
+      client: { firebaseConfig: conf },
+      server: { firebaseAdminApp: adminApp },
+      ci: undefined,
+    }))
+  ),
+});

@@ -12,7 +12,7 @@ specifiers:
   firebase-tools: ^11.17.0
   fp-ts: ^2.13.1
   fp-ts-std: ^0.15.1
-  masmott: ^1.15.0
+  masmott: ^1.16.0
   nazna: ^1.14.2
   node-fetch: ^3.3.0
   pnpm: ^7.14.2
@@ -30,7 +30,7 @@ dependencies:
   firebase-functions: 4.1.0_firebase-admin@11.3.0
   fp-ts: 2.13.1
   fp-ts-std: 0.15.1_sddbbwftoqt3d5g3p7ix53ouca
-  masmott: 1.15.0_xbpvxrvmp5lyzipg7btlnwttfi
+  masmott: 1.16.0_xbpvxrvmp5lyzipg7btlnwttfi
   ts-pattern: 4.0.6
 
 devDependencies:
@@ -5939,8 +5939,8 @@ packages:
     engines: {node: '>= 12'}
     hasBin: true
 
-  /masmott/1.15.0_xbpvxrvmp5lyzipg7btlnwttfi:
-    resolution: {integrity: sha512-cs2uebeB1h7B07YGumIWBwuPN8Q1mZ2lKbJwX0e0ItIBxHkOnfpyh9VXwDISZIQOgOggnYuS143rh+90QCwh0g==}
+  /masmott/1.16.0_xbpvxrvmp5lyzipg7btlnwttfi:
+    resolution: {integrity: sha512-bmD8drMmqulyka8eSD9j+PtlpujlcxSSgnQo8+Qe7JigtShrPOHteWGLL2iylehsV4S2WxEqmlOOo8LG3gtq3w==}
     hasBin: true
     dependencies:
       '@morphic-ts/batteries': 3.0.0_ljogjlciannwm3nucb2c2w5a34
