@@ -20,7 +20,7 @@ jobs:
       - run: pnpm lint
       - run: pnpm test:types
 
-  test-non-functions:
+  test-without-functions:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -50,10 +50,10 @@ jobs:
       - run: pnpm build:cjs
       - run: pnpm build:types
       - run: pnpm install:functions
-      - run: pnpm test:non-functions
+      - run: pnpm test:without-functions
 
   release:
-    needs: [lint-and-typecheck, test-non-functions]
+    needs: [lint-and-typecheck, test-without-functions]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
