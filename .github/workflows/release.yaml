@@ -57,7 +57,7 @@ jobs:
           CLEANUP_DELAY: "1000"
           DEPLOY_STORAGE_DELAY: "1000"
           DEPLOY_DB_DELAY: "1000"
-          DEPLOY_FUNCTIONS_DELAY: "15000"
+          DEPLOY_FUNCTIONS_DELAY: "20000"
 
   release:
     needs: [lint-and-typecheck, test-independence]
