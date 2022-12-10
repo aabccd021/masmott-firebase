@@ -53,7 +53,7 @@ jobs:
       - run: pnpm test:independence
         env:
           ITERATION: ${{ matrix.ITERATION }}
-          TIMEOUT_DELAY: "45000"
+          TIMEOUT_DELAY: "60000"
           CLEANUP_DELAY: "1000"
           DEPLOY_STORAGE_DELAY: "1000"
           DEPLOY_DB_DELAY: "1000"
