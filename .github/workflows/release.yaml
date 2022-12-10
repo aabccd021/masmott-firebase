@@ -55,6 +55,10 @@ jobs:
         env:
           ITERATION: ${{ matrix.ITERATION }}
           TIMEOUT_DELAY: "45000"
+          CLEANUP_DELAY: "1000"
+          DEPLOY_STORAGE_DELAY: "1000"
+          DEPLOY_DB_DELAY: "1000"
+          DEPLOY_FUNCTIONS_DELAY: "10000"
 
   release:
     needs: [lint-and-typecheck, test-independence]
