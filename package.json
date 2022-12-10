@@ -12,10 +12,9 @@
     "pre-push:dirty": "pnpm install && pnpm build && pnpm lint && pnpm test",
     "install:functions": "cd functions && pnpm install",
     "test:types": "tsc --noEmit",
-    "test:independence": "firebase --project demo emulators:exec 'vitest --run independence.test.ts'",
-    "test:capability": "firebase --project demo emulators:exec 'vitest --run capability.test.ts'",
     "test:functions": "firebase --project demo emulators:exec 'vitest --run functions.test.ts'",
-    "test:masmott": "pnpm test:independence && pnpm test:capability && pnpm test:functions",
+    "test:non-functions": "firebase --project demo emulators:exec 'vitest --run non-functions.test.ts'",
+    "test:masmott": "pnpm test:functions && pnpm test:non-functions",
     "test": "pnpm test:types && pnpm install:functions && pnpm test:masmott"
   },
   "dependencies": {

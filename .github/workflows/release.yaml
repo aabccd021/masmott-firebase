@@ -20,11 +20,11 @@ jobs:
       - run: pnpm lint
       - run: pnpm test:types
 
-  test-independence:
+  test-non-functions:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ITERATION: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        ITERATION: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.2.4
@@ -50,17 +50,10 @@ jobs:
       - run: pnpm build:cjs
       - run: pnpm build:types
       - run: pnpm install:functions
-      - run: pnpm test:independence
-        env:
-          ITERATION: ${{ matrix.ITERATION }}
-          TIMEOUT_DELAY: "90000"
-          CLEANUP_DELAY: "3000"
-          DEPLOY_STORAGE_DELAY: "3000"
-          DEPLOY_DB_DELAY: "3000"
-          DEPLOY_FUNCTIONS_DELAY: "30000"
+      - run: pnpm test:non-functions
 
   release:
-    needs: [lint-and-typecheck, test-independence]
+    needs: [lint-and-typecheck, test-non-functions]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
