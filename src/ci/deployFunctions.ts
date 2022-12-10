@@ -39,12 +39,12 @@ export const deployFunctions: Type = () => (p) =>
       (details) => ({
         code: 'FailedLoadingFunctions' as const,
         capability: 'ci.deployFunctions' as const,
-        details,
+        details: JSON.stringify(details),
       })
     ),
     taskEither.chainTaskK(() =>
       std.task.sleep(
-        std.date.mkMilliseconds(parseFloat(process.env['DEPLOY_FUNCTIONS_DELAY'] ?? '10000'))
+        std.date.mkMilliseconds(parseFloat(process.env['DEPLOY_FUNCTIONS_DELAY'] ?? '5000'))
       )
     )
   );

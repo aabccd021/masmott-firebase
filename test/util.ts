@@ -93,7 +93,7 @@ const clearFunctions = taskEither.tryCatch(async () => {
   // eslint-disable-next-line functional/no-conditional-statement
   if (content !== noFn) {
     await fs.writeFile('functions/lib/index.js', noFn, { encoding: 'utf8' });
-    await sleep(parseFloat(process.env['CLEANUP_DELAY'] ?? '3000'));
+    await sleep(parseFloat(process.env['CLEANUP_DELAY'] ?? '1000'));
   }
 }, identity);
 

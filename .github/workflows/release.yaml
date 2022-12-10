@@ -49,6 +49,7 @@ jobs:
             steps.firebase-cli-version.outputs.FIREBASE_CLI_VERSION }}
       - run: pnpm build:es6
       - run: pnpm build:cjs
+      - run: pnpm build:types
       - run: pnpm install:functions
       - run: pnpm test:independence
         env:

@@ -21,7 +21,7 @@ export const deployStorage: Stack['ci']['deployStorage'] = () => () =>
     () => fs.writeFile('storage.rules', getStorageRule(true), { encoding: 'utf8' }),
     task.chain(() =>
       std.task.sleep(
-        std.date.mkMilliseconds(parseFloat(process.env['DEPLOY_STORAGE_DELAY'] ?? '1500'))
+        std.date.mkMilliseconds(parseFloat(process.env['DEPLOY_STORAGE_DELAY'] ?? '1000'))
       )
     ),
     taskEither.fromTask
