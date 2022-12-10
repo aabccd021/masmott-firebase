@@ -54,6 +54,7 @@ jobs:
       - run: pnpm test:independence
         env:
           ITERATION: ${{ matrix.ITERATION }}
+          DEPLOY_FUNCTIONS_DELAY: '7000'
 
   release:
     needs: [lint-and-typecheck, test-independence]
