@@ -24,7 +24,7 @@ export const upsertDoc: Stack['client']['db']['upsertDoc'] =
         taskEither.tryCatch(
           () => _setDoc(docRef, data),
           flow(
-            CodedError.type.decode,
+            CodedError.decode,
             either.bimap(handleUnknownError, (codedError) =>
               match(codedError)
                 .with({ code: 'permission-denied' }, () => ({

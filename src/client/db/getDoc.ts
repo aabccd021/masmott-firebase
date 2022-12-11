@@ -22,7 +22,7 @@ export const getDoc: Stack['client']['db']['getDoc'] =
         taskEither.tryCatch(
           () => _getDoc(docRef),
           flow(
-            CodedError.type.decode,
+            CodedError.decode,
             either.bimap(handleUnknownError, (codedError) =>
               match(codedError)
                 .with({ code: 'permission-denied' }, () => ({

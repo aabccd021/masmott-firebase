@@ -18,7 +18,7 @@ export const createUserAndSignInWithEmailAndPassword: Type =
       taskEither.tryCatch(
         () => createUserWithEmailAndPassword(auth, email, password).then(() => undefined),
         flow(
-          CodedError.type.decode,
+          CodedError.decode,
           either.bimap(handleUnknownError, (codedError) =>
             match(codedError)
               .with({ code: 'auth/email-already-in-use' }, () => ({

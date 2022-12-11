@@ -18,13 +18,12 @@
     "test": "pnpm test:types && pnpm install:functions && pnpm test:masmott"
   },
   "dependencies": {
-    "@morphic-ts/batteries": "^3.0.0",
-    "@morphic-ts/summoners": "^3.0.0",
     "firebase": "^9.14.0",
     "firebase-admin": "^11.3.0",
     "firebase-functions": "^4.1.0",
     "fp-ts": "^2.13.1",
     "fp-ts-std": "^0.15.1",
+    "io-ts": "^2.2.20",
     "masmott": "^1.16.1",
     "ts-pattern": "^4.0.6"
   },
