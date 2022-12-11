@@ -110,7 +110,7 @@ export const runSuite = runSuiteWithConfig<StackType>({
   stack,
   getTestEnv: pipe(
     taskEither.tryCatch(clearAll, (err) => ({
-      capability: 'getTestEnv',
+      capability: 'test.getTestEnv' as const,
       err: JSON.stringify(err, undefined, 2),
     })),
     taskEither.map(() => ({
