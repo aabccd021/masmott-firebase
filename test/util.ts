@@ -117,11 +117,11 @@ export const runSuite = runSuiteWithConfig<StackType>({
   stack,
   getTestEnv: pipe(
     clearStorage,
-    taskEither.chainIOK(() => clearFunctions),
     taskEither.chainW(() => clearFirestore),
     taskEither.chainW(() => clearAuth),
     taskEither.chainW(() => signOutClient),
     taskEither.chainW(() => clearFirestoreRule),
+    taskEither.chainW(() => clearFunctions),
     taskEither.map(() => ({
       client: { firebaseConfig: conf },
       server: { firebaseAdminApp: adminApp },
