@@ -83,11 +83,7 @@ jobs:
       - run: pnpm build:cjs
       - run: pnpm build:types
       - run: pnpm install:functions
-      - uses: nick-fields/retry@v2
-        with:
-          timeout_minutes: 10
-          max_attempts: 3
-          command: pnpm firebase --project demo emulators:exec 'vitest --run parallel.test.ts --shard=${{ matrix.shard }}/10'
+      - run: pnpm firebase --project demo emulators:exec 'vitest --run parallel.test.ts --shard=${{ matrix.shard }}/10'
 
   release:
     needs: [lint-and-typecheck, test-serial, test-parallel]
