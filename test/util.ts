@@ -39,7 +39,6 @@ connectFirestoreEmulatorLite(getFirestoreLite(app), emulatorHost, firestorePort)
 connectFirestoreEmulator(getFirestore(app), emulatorHost, firestorePort);
 
 // https://firebase.google.com/docs/emulator-suite/connect_storage#admin_sdks
-
 const clearStorage = async () => {
   const [files] = await serverEnv.firebaseAdminApp.storage().bucket(conf.storageBucket).getFiles();
   await Promise.all(files.map((file) => file.delete()));
