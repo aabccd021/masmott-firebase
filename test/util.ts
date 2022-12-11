@@ -80,7 +80,7 @@ const writeIfDifferent = async (filePath: string, expectedContent: string, delay
   // eslint-disable-next-line functional/no-conditional-statement
   if (content !== expectedContent) {
     await fs.mkdir(path.dirname(filePath), { recursive: true });
-    await fs.writeFile(filePath, noFn, { encoding: 'utf8' });
+    await fs.writeFile(filePath, expectedContent, { encoding: 'utf8' });
     await sleep(delay);
   }
 };
