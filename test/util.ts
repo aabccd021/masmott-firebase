@@ -8,7 +8,7 @@ import {
 import { connectStorageEmulator, getStorage } from 'firebase/storage';
 import * as admin from 'firebase-admin';
 import { readonlyArray, taskEither } from 'fp-ts';
-import { identity, pipe } from 'fp-ts/function';
+import { JSON.stringify, pipe } from 'fp-ts/function';
 import * as fs from 'fs/promises';
 import { runSuiteWithConfig } from 'masmott/dist/cjs/test';
 import fetch from 'node-fetch';
@@ -42,11 +42,11 @@ const adminApp = admin.initializeApp(adminConfig);
 const bucket = adminApp.storage().bucket(conf.storageBucket);
 
 const clearStorage = pipe(
-  taskEither.tryCatch(() => bucket.getFiles(), identity),
+  taskEither.tryCatch(() => bucket.getFiles(), JSON.stringify),
   taskEither.map(([files]) => files),
   taskEither.chainW(
     readonlyArray.traverse(taskEither.ApplicativeSeq)((file) =>
-      taskEither.tryCatch(() => file.delete(), identity)
+      taskEither.tryCatch(() => file.delete(), JSON.stringify)
     )
   )
 );
@@ -58,7 +58,7 @@ const clearFirestore = taskEither.tryCatch(
       `http://${emulatorHost}:${firestorePort}/emulator/v1/projects/${conf.projectId}/databases/(default)/documents`,
       { method: 'DELETE' }
     ),
-  identity
+  JSON.stringify
 );
 
 // https://firebase.google.com/docs/reference/rest/auth#section-auth-emulator-clearaccounts
@@ -67,10 +67,10 @@ const clearAuth = taskEither.tryCatch(
     fetch(`${authEndpoint}/emulator/v1/projects/${conf.projectId}/accounts`, {
       method: 'DELETE',
     }),
-  identity
+  JSON.stringify
 );
 
-const signOutClient = taskEither.tryCatch(() => signOut(getAuth(app)), identity);
+const signOutClient = taskEither.tryCatch(() => signOut(getAuth(app)), JSON.stringify);
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -101,7 +101,7 @@ service cloud.firestore {
 
 const clearFirestoreRule = taskEither.tryCatch(
   () => fs.writeFile('firestore.rules', defaultFirestoreRule, { encoding: 'utf8' }),
-  identity
+  JSON.stringify
 );
 
 const clearFunctions = taskEither.tryCatch(async () => {
@@ -111,7 +111,7 @@ const clearFunctions = taskEither.tryCatch(async () => {
     await fs.writeFile('functions/lib/index.js', noFn, { encoding: 'utf8' });
     await sleep(parseFloat(process.env['DEPLOY_FUNCTIONS_DELAY'] ?? '7000'));
   }
-}, identity);
+}, JSON.stringify);
 
 export const runSuite = runSuiteWithConfig<StackType>({
   stack,
