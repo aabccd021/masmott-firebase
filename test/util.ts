@@ -113,20 +113,22 @@ const clearFirestoreRule = () =>
     parseFloat(process.env['DEPLOY_DB_DELAY'] ?? '3000')
   );
 
+const clearAll = async () => {
+  await clearFirestoreRule();
+  await clearFunctions();
+  await clearFirestore();
+  await clearAuth();
+  await clearStorage();
+  await signOutClient();
+};
+
 export const runSuite = runSuiteWithConfig<StackType>({
   stack,
   getTestEnv: pipe(
-    taskEither.tryCatch(
-      async () => {
-        await clearFirestoreRule();
-        await clearFunctions();
-        await clearFirestore();
-        await clearAuth();
-        await clearStorage();
-        await signOutClient();
-      },
-      (err) => ({ capability: 'getTestEnv', err: JSON.stringify(err, undefined, 2) })
-    ),
+    taskEither.tryCatch(clearAll, (err) => ({
+      capability: 'getTestEnv',
+      err: JSON.stringify(err, undefined, 2),
+    })),
     taskEither.map(() => ({
       client: { firebaseConfig: conf },
       server: { firebaseAdminApp: adminApp },
@@ -135,8 +137,4 @@ export const runSuite = runSuiteWithConfig<StackType>({
   ),
 });
 
-afterAll(async () => {
-  await fs.rm('functions/lib', { force: true, recursive: true });
-  await clearFirestoreRule();
-  await clearFunctions();
-});
+afterAll(clearAll);
