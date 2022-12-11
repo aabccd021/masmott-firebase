@@ -88,6 +88,22 @@ Object.defineProperty(exports, "masmottFunctions", {
 var masmottFunctions = {};
 `;
 
+const defaultFirestoreRule = `
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+`;
+
+const clearFirestoreRule = taskEither.tryCatch(
+  () => fs.writeFile('firestore.rules', defaultFirestoreRule, { encoding: 'utf8' }),
+  identity
+);
+
 const clearFunctions = taskEither.tryCatch(async () => {
   const content = await fs.readFile('functions/lib/index.js', { encoding: 'utf8' });
   // eslint-disable-next-line functional/no-conditional-statement
@@ -105,6 +121,7 @@ export const runSuite = runSuiteWithConfig<StackType>({
     taskEither.chainW(() => clearFirestore),
     taskEither.chainW(() => clearAuth),
     taskEither.chainW(() => signOutClient),
+    taskEither.chainW(() => clearFirestoreRule),
     taskEither.map(() => ({
       client: { firebaseConfig: conf },
       server: { firebaseAdminApp: adminApp },
