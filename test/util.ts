@@ -42,7 +42,7 @@ const adminConfig = { projectId: conf.projectId };
 const adminApp = admin.initializeApp(adminConfig);
 const bucket = adminApp.storage().bucket(conf.storageBucket);
 
-const indentedStringify = (x: unknown) => indentedStringify(x, undefined, 2);
+const indentedStringify = (x: unknown) => JSON.stringify(x, undefined, 2);
 
 const clearStorage = pipe(
   taskEither.tryCatch(() => bucket.getFiles(), indentedStringify),
