@@ -8,7 +8,7 @@ import {
 import { connectStorageEmulator, getStorage } from 'firebase/storage';
 import * as admin from 'firebase-admin';
 import { readonlyArray, taskEither } from 'fp-ts';
-import { JSON.stringify, pipe } from 'fp-ts/function';
+import { pipe } from 'fp-ts/function';
 import * as fs from 'fs/promises';
 import { runSuiteWithConfig } from 'masmott/dist/cjs/test';
 import fetch from 'node-fetch';
@@ -108,7 +108,7 @@ const clearFunctions = taskEither.tryCatch(async () => {
   const content = await fs.readFile('functions/lib/index.js', { encoding: 'utf8' });
   // eslint-disable-next-line functional/no-conditional-statement
   if (content !== noFn) {
-    await fs.mkdir('functions/lib', {recursive: true})
+    await fs.mkdir('functions/lib', { recursive: true });
     await fs.writeFile('functions/lib/index.js', noFn, { encoding: 'utf8' });
     await sleep(parseFloat(process.env['DEPLOY_FUNCTIONS_DELAY'] ?? '7000'));
   }
