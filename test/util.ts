@@ -117,7 +117,7 @@ export const runSuite = runSuiteWithConfig<StackType>({
   stack,
   getTestEnv: pipe(
     clearStorage,
-    taskEither.chainW(() => clearFunctions),
+    taskEither.chainIOK(() => clearFunctions),
     taskEither.chainW(() => clearFirestore),
     taskEither.chainW(() => clearAuth),
     taskEither.chainW(() => signOutClient),
