@@ -42,12 +42,14 @@ const adminConfig = { projectId: conf.projectId };
 const adminApp = admin.initializeApp(adminConfig);
 const bucket = adminApp.storage().bucket(conf.storageBucket);
 
+const indentedStringify = (x: unknown) => indentedStringify(x, undefined, 2);
+
 const clearStorage = pipe(
-  taskEither.tryCatch(() => bucket.getFiles(), JSON.stringify),
+  taskEither.tryCatch(() => bucket.getFiles(), indentedStringify),
   taskEither.map(([files]) => files),
   taskEither.chainW(
     readonlyArray.traverse(taskEither.ApplicativeSeq)((file) =>
-      taskEither.tryCatch(() => file.delete(), JSON.stringify)
+      taskEither.tryCatch(() => file.delete(), indentedStringify)
     )
   )
 );
@@ -59,7 +61,7 @@ const clearFirestore = taskEither.tryCatch(
       `http://${emulatorHost}:${firestorePort}/emulator/v1/projects/${conf.projectId}/databases/(default)/documents`,
       { method: 'DELETE' }
     ),
-  JSON.stringify
+  indentedStringify
 );
 
 // https://firebase.google.com/docs/reference/rest/auth#section-auth-emulator-clearaccounts
@@ -68,10 +70,10 @@ const clearAuth = taskEither.tryCatch(
     fetch(`${authEndpoint}/emulator/v1/projects/${conf.projectId}/accounts`, {
       method: 'DELETE',
     }),
-  JSON.stringify
+  indentedStringify
 );
 
-const signOutClient = taskEither.tryCatch(() => signOut(getAuth(app)), JSON.stringify);
+const signOutClient = taskEither.tryCatch(() => signOut(getAuth(app)), indentedStringify);
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -135,7 +137,7 @@ export const runSuite = runSuiteWithConfig<StackType>({
       taskEither.tryCatch(async () => {
         await clearFirestoreRule();
         await clearFunctions();
-      }, JSON.stringify)
+      }, indentedStringify)
     ),
     taskEither.map(() => ({
       client: { firebaseConfig: conf },
