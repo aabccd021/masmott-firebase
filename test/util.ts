@@ -13,6 +13,7 @@ import * as fs from 'fs/promises';
 import { runSuiteWithConfig } from 'masmott/dist/cjs/test';
 import fetch from 'node-fetch';
 import * as path from 'path';
+import { afterAll } from 'vitest';
 
 import { stack } from '../src';
 import type { StackType } from '../src/type';
@@ -145,4 +146,10 @@ export const runSuite = runSuiteWithConfig<StackType>({
       ci: undefined,
     }))
   ),
+});
+
+afterAll(async () => {
+  await fs.rm('functions/lib', { force: true, recursive: true });
+  await clearFirestoreRule();
+  await clearFunctions();
 });
