@@ -47,11 +47,7 @@ jobs:
       - run: pnpm build:cjs
       - run: pnpm build:types
       - run: pnpm install:functions
-      - uses: nick-fields/retry@v2
-        with:
-          timeout_minutes: 10
-          max_attempts: 3
-          command: pnpm test:serial
+      - run: pnpm test:serial
 
   test-parallel:
     runs-on: ubuntu-latest
