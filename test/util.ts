@@ -1,4 +1,3 @@
-/* eslint-disable functional/no-conditional-statement */
 import { initializeApp } from 'firebase/app';
 import { connectAuthEmulator, getAuth, signOut } from 'firebase/auth';
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
@@ -9,7 +8,6 @@ import {
 import { connectStorageEmulator, getStorage } from 'firebase/storage';
 import { taskEither } from 'fp-ts';
 import { pipe } from 'fp-ts/function';
-import { existsSync } from 'fs';
 import * as fs from 'fs/promises';
 import { runSuiteWithConfig } from 'masmott/dist/cjs/test';
 import fetch from 'node-fetch';
@@ -65,16 +63,13 @@ const signOutClient = () => signOut(getAuth(app));
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const writeIfDifferent = async (filePath: string, expectedContent: string, delay: number) => {
-  if (
-    existsSync(filePath) &&
-    (await fs.readFile(filePath, { encoding: 'utf8' })) === expectedContent
-  ) {
-    return;
+  const content = await fs.readFile(filePath, { encoding: 'utf8' });
+  // eslint-disable-next-line functional/no-conditional-statement
+  if (content !== expectedContent) {
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    await fs.writeFile(filePath, expectedContent, { encoding: 'utf8' });
+    await sleep(delay);
   }
-
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await fs.writeFile(filePath, expectedContent, { encoding: 'utf8' });
-  await sleep(delay);
 };
 
 const noFn = `
