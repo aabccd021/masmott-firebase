@@ -12,6 +12,7 @@ import { pipe } from 'fp-ts/function';
 import * as fs from 'fs/promises';
 import { runSuiteWithConfig } from 'masmott/dist/cjs/test';
 import fetch from 'node-fetch';
+import * as path from 'path';
 
 import { stack } from '../src';
 import type { StackType } from '../src/type';
@@ -74,6 +75,16 @@ const signOutClient = taskEither.tryCatch(() => signOut(getAuth(app)), JSON.stri
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const writeIfDifferent = async (filePath: string, expectedContent: string, delay: number) => {
+  const content = await fs.readFile(filePath, { encoding: 'utf8' });
+  // eslint-disable-next-line functional/no-conditional-statement
+  if (content !== expectedContent) {
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    await fs.writeFile(filePath, noFn, { encoding: 'utf8' });
+    await sleep(delay);
+  }
+};
+
 const noFn = `
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -88,6 +99,13 @@ Object.defineProperty(exports, "masmottFunctions", {
 var masmottFunctions = {};
 `;
 
+const clearFunctions = () =>
+  writeIfDifferent(
+    'functions/lib/index.js',
+    noFn,
+    parseFloat(process.env['DEPLOY_FUNCTIONS_DELAY'] ?? '7000')
+  );
+
 const defaultFirestoreRule = `
 rules_version = '2';
 service cloud.firestore {
@@ -99,20 +117,12 @@ service cloud.firestore {
 }
 `;
 
-const clearFirestoreRule = taskEither.tryCatch(
-  () => fs.writeFile('firestore.rules', defaultFirestoreRule, { encoding: 'utf8' }),
-  JSON.stringify
-);
-
-const clearFunctions = taskEither.tryCatch(async () => {
-  const content = await fs.readFile('functions/lib/index.js', { encoding: 'utf8' });
-  // eslint-disable-next-line functional/no-conditional-statement
-  if (content !== noFn) {
-    await fs.mkdir('functions/lib', { recursive: true });
-    await fs.writeFile('functions/lib/index.js', noFn, { encoding: 'utf8' });
-    await sleep(parseFloat(process.env['DEPLOY_FUNCTIONS_DELAY'] ?? '7000'));
-  }
-}, JSON.stringify);
+const clearFirestoreRule = () =>
+  writeIfDifferent(
+    'firestore.rules',
+    defaultFirestoreRule,
+    parseFloat(process.env['DEPLOY_DB_DELAY'] ?? '3000')
+  );
 
 export const runSuite = runSuiteWithConfig<StackType>({
   stack,
@@ -121,8 +131,12 @@ export const runSuite = runSuiteWithConfig<StackType>({
     taskEither.chainW(() => clearFirestore),
     taskEither.chainW(() => clearAuth),
     taskEither.chainW(() => signOutClient),
-    taskEither.chainW(() => clearFirestoreRule),
-    taskEither.chainW(() => clearFunctions),
+    taskEither.chainW(() =>
+      taskEither.tryCatch(async () => {
+        await clearFirestoreRule();
+        await clearFunctions();
+      }, JSON.stringify)
+    ),
     taskEither.map(() => ({
       client: { firebaseConfig: conf },
       server: { firebaseAdminApp: adminApp },
