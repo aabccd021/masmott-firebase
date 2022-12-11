@@ -37,35 +37,12 @@ connectStorageEmulator(getStorage(app), emulatorHost, 9199);
 connectFirestoreEmulatorLite(getFirestoreLite(app), emulatorHost, firestorePort);
 connectFirestoreEmulator(getFirestore(app), emulatorHost, firestorePort);
 
-// https://firebase.google.com/docs/emulator-suite/connect_storage#admin_sdks
-const clearStorage = async () => {
-  const [files] = await serverEnv.firebaseAdminApp.storage().bucket(conf.storageBucket).getFiles();
-  await Promise.all(files.map((file) => file.delete()));
-};
-
-// https://firebase.google.com/docs/emulator-suite/connect_firestore#clear_your_database_between_tests
-const clearFirestore = () =>
-  fetch(
-    `http://${emulatorHost}:${firestorePort}/emulator/v1/projects/${conf.projectId}/databases/(default)/documents`,
-    { method: 'DELETE' }
-  );
-
-// https://firebase.google.com/docs/reference/rest/auth#section-auth-emulator-clearaccounts
-const clearAuth = () =>
-  fetch(`${authEndpoint}/emulator/v1/projects/${conf.projectId}/accounts`, {
-    method: 'DELETE',
-  });
-
-const signOutClient = () => signOut(getAuth(app));
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const writeIfDifferent = async (filePath: string, expectedContent: string, delay: number) => {
+const writeIfDifferent = async (filePath: string, expectedContent: string, delayMs: number) => {
   const content = await fs.readFile(filePath, { encoding: 'utf8' });
   // eslint-disable-next-line functional/no-conditional-statement
   if (content !== expectedContent) {
     await fs.writeFile(filePath, expectedContent, { encoding: 'utf8' });
-    await sleep(delay);
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
   }
 };
 
@@ -83,13 +60,6 @@ Object.defineProperty(exports, "masmottFunctions", {
 var masmottFunctions = {};
 `;
 
-const clearFunctions = () =>
-  writeIfDifferent(
-    'functions/lib/index.js',
-    noFn,
-    parseFloat(process.env['DEPLOY_FUNCTIONS_DELAY'] ?? '7000')
-  );
-
 const defaultFirestoreRule = `
 rules_version = '2';
 service cloud.firestore {
@@ -101,21 +71,40 @@ service cloud.firestore {
 }
 `;
 
-const clearFirestoreRule = () =>
-  writeIfDifferent(
-    'firestore.rules',
-    defaultFirestoreRule,
-    parseFloat(process.env['DEPLOY_DB_DELAY'] ?? '3000')
-  );
+const clearAll = () =>
+  Promise.all([
+    writeIfDifferent(
+      'firestore.rules',
+      defaultFirestoreRule,
+      parseFloat(process.env['DEPLOY_DB_DELAY'] ?? '3000')
+    ),
 
-const clearAll = async () => {
-  await clearFirestoreRule();
-  await clearFunctions();
-  await clearFirestore();
-  await clearAuth();
-  await clearStorage();
-  await signOutClient();
-};
+    writeIfDifferent(
+      'functions/lib/index.js',
+      noFn,
+      parseFloat(process.env['DEPLOY_FUNCTIONS_DELAY'] ?? '7000')
+    ),
+
+    // https://firebase.google.com/docs/emulator-suite/connect_firestore#clear_your_database_between_tests
+    fetch(
+      `http://${emulatorHost}:${firestorePort}/emulator/v1/projects/${conf.projectId}/databases/(default)/documents`,
+      { method: 'DELETE' }
+    ),
+
+    // https://firebase.google.com/docs/reference/rest/auth#section-auth-emulator-clearaccounts
+    fetch(`${authEndpoint}/emulator/v1/projects/${conf.projectId}/accounts`, {
+      method: 'DELETE',
+    }),
+
+    // https://firebase.google.com/docs/emulator-suite/connect_storage#admin_sdks
+    serverEnv.firebaseAdminApp
+      .storage()
+      .bucket(conf.storageBucket)
+      .getFiles()
+      .then(([files]) => Promise.all(files.map((file) => file.delete()))),
+
+    signOut(getAuth(app)),
+  ]);
 
 export const runSuite = runSuiteWithConfig<StackType>({
   stack,
@@ -132,4 +121,6 @@ export const runSuite = runSuiteWithConfig<StackType>({
   ),
 });
 
-afterAll(clearAll);
+afterAll(async () => {
+  await clearAll();
+});
