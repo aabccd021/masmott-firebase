@@ -6,7 +6,6 @@ import {
   getFirestore as getFirestoreLite,
 } from 'firebase/firestore/lite';
 import { connectStorageEmulator, getStorage } from 'firebase/storage';
-import * as admin from 'firebase-admin';
 import { taskEither } from 'fp-ts';
 import { pipe } from 'fp-ts/function';
 import * as fs from 'fs/promises';
@@ -15,6 +14,7 @@ import fetch from 'node-fetch';
 import * as path from 'path';
 import { afterAll } from 'vitest';
 
+import { env as serverEnv } from '../functions/src/masmott-firebase.server.env';
 import { stack } from '../src';
 import type { StackType } from '../src/type';
 
@@ -39,11 +39,9 @@ connectFirestoreEmulatorLite(getFirestoreLite(app), emulatorHost, firestorePort)
 connectFirestoreEmulator(getFirestore(app), emulatorHost, firestorePort);
 
 // https://firebase.google.com/docs/emulator-suite/connect_storage#admin_sdks
-const adminConfig = { projectId: conf.projectId };
-const adminApp = admin.initializeApp(adminConfig);
 
 const clearStorage = async () => {
-  const [files] = await adminApp.storage().bucket(conf.storageBucket).getFiles();
+  const [files] = await serverEnv.firebaseAdminApp.storage().bucket(conf.storageBucket).getFiles();
   await Promise.all(files.map((file) => file.delete()));
 };
 
@@ -131,7 +129,7 @@ export const runSuite = runSuiteWithConfig<StackType>({
     })),
     taskEither.map(() => ({
       client: { firebaseConfig: conf },
-      server: { firebaseAdminApp: adminApp },
+      server: serverEnv,
       ci: undefined,
     }))
   ),
