@@ -4,9 +4,9 @@ import { option } from 'fp-ts';
 import { flow, pipe } from 'fp-ts/function';
 import * as std from 'fp-ts-std';
 
-import type { Client } from '../../type';
+import type { Stack } from '../../type';
 
-type Type = Client['auth']['onAuthStateChanged'];
+type Type = Stack['client']['auth']['onAuthStateChanged'];
 
 export const onAuthStateChanged: Type = (env) => (onChangeCallback) =>
   pipe(
@@ -14,13 +14,5 @@ export const onAuthStateChanged: Type = (env) => (onChangeCallback) =>
     initializeApp,
     getAuth,
     (auth) => () =>
-      _onAuthStateChanged(
-        auth,
-        flow(
-          option.fromNullable,
-          option.chain((user) => option.fromNullable(user.uid)),
-          (uid) => onChangeCallback(uid),
-          std.io.execute
-        )
-      )
+      _onAuthStateChanged(auth, flow(option.fromNullable, onChangeCallback, std.io.execute))
   );

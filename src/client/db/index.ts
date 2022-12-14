@@ -1,2 +1,4 @@
 export * from './getDoc';
-export * from './setDoc';
+export * from './getDocWhen';
+export * from './onSnapshot';
+export * from './upsertDoc';
