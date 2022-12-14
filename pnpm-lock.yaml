@@ -11,7 +11,7 @@ specifiers:
   fp-ts: ^2.13.1
   fp-ts-std: ^0.15.1
   io-ts: ^2.2.20
-  masmott: ^1.16.1
+  masmott: ^1.17.0
   nazna: ^1.14.2
   node-fetch: ^3.3.0
   pnpm: ^7.14.2
@@ -28,7 +28,7 @@ dependencies:
   fp-ts: 2.13.1
   fp-ts-std: 0.15.1_sddbbwftoqt3d5g3p7ix53ouca
   io-ts: 2.2.20_fp-ts@2.13.1
-  masmott: 1.16.1_xbpvxrvmp5lyzipg7btlnwttfi
+  masmott: 1.17.0_xbpvxrvmp5lyzipg7btlnwttfi
   ts-pattern: 4.0.6
 
 devDependencies:
@@ -5733,8 +5733,8 @@ packages:
     engines: {node: '>= 12'}
     hasBin: true
 
-  /masmott/1.16.1_xbpvxrvmp5lyzipg7btlnwttfi:
-    resolution: {integrity: sha512-0+Kb6FKI2+dAuCnf/gfos7kJXfwSDmMBM32upRGNParNC4/xValaexsQ5CYvz6K6u9XsnzKurXRZsrL+1P5vIQ==}
+  /masmott/1.17.0_xbpvxrvmp5lyzipg7btlnwttfi:
+    resolution: {integrity: sha512-kG3ERVKOekdlMAqrNUs7yAsw/iDenA326W54aXTuD2OyuEuqou11JKB7+1IAV7dP+2mxqbqKNk1L7Ud+79eyiw==}
     hasBin: true
     dependencies:
       '@morphic-ts/batteries': 3.0.0_ljogjlciannwm3nucb2c2w5a34

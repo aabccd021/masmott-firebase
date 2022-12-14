@@ -14,20 +14,28 @@ const handleUnknownError = (value: unknown) => ({ code: 'ProviderError' as const
 export const createUserAndSignInWithEmailAndPassword: Type =
   (env) =>
   ({ email, password }) =>
-    pipe(env.firebaseConfig, initializeApp, getAuth, (auth) =>
-      taskEither.tryCatch(
-        () => createUserWithEmailAndPassword(auth, email, password).then(() => undefined),
-        flow(
-          CodedError.decode,
-          either.bimap(handleUnknownError, (codedError) =>
-            match(codedError)
-              .with({ code: 'auth/email-already-in-use' }, () => ({
-                code: 'EmailAlreadyInUse' as const,
-              }))
-              .otherwise(handleUnknownError)
-          ),
-          either.toUnion,
-          (err) => ({ ...err, capability: 'client.auth.createUserAndSignInWithEmailAndPassword' })
-        )
-      )
+    pipe(
+      env.firebaseConfig,
+      initializeApp,
+      getAuth,
+      (auth) =>
+        taskEither.tryCatch(
+          () => createUserWithEmailAndPassword(auth, email, password),
+          flow(
+            CodedError.decode,
+            either.bimap(handleUnknownError, (codedError) =>
+              match(codedError)
+                .with({ code: 'auth/email-already-in-use' }, () => ({
+                  code: 'EmailAlreadyInUse' as const,
+                }))
+                .otherwise(handleUnknownError)
+            ),
+            either.toUnion,
+            (err) => ({
+              ...err,
+              capability: 'client.auth.createUserAndSignInWithEmailAndPassword' as const,
+            })
+          )
+        ),
+      taskEither.map((userCredential) => ({ authUser: { uid: userCredential.user.uid } }))
     );

@@ -14,6 +14,7 @@
     "test:types": "tsc --noEmit",
     "test:serial": "firebase --project demo emulators:exec 'vitest --run serial.test.ts'",
     "test:parallel": "firebase --project demo emulators:exec 'vitest --run parallel.test.ts'",
+    "test:custom": "firebase --project demo emulators:exec 'vitest --run custom.test.ts'",
     "test:masmott": "pnpm test:serial && pnpm test:parallel",
     "test": "pnpm test:types && pnpm install:functions && pnpm test:masmott"
   },
@@ -24,7 +25,7 @@
     "fp-ts": "^2.13.1",
     "fp-ts-std": "^0.15.1",
     "io-ts": "^2.2.20",
-    "masmott": "^1.16.1",
+    "masmott": "^1.17.0",
     "ts-pattern": "^4.0.6"
   },
   "devDependencies": {

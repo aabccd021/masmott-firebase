@@ -89,7 +89,7 @@ ${content}
 
 const getFirestoreRuleStr = (rules: StackT.ci.DeployDb.Param): string =>
   pipe(
-    rules,
+    rules.collections,
     readonlyRecord.mapWithIndex((collectionName, collectionRule) =>
       pipe(
         [

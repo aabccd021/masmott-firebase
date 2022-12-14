@@ -8,6 +8,7 @@ import type { Stack } from '../../type';
 import { CodedError } from '../../type';
 
 const handleUnknownError = (value: unknown) => ({ code: 'ProviderError' as const, value });
+
 export const getDownloadUrl: Stack['client']['storage']['getDownloadUrl'] =
   (env) =>
   ({ key }) =>
@@ -15,7 +16,7 @@ export const getDownloadUrl: Stack['client']['storage']['getDownloadUrl'] =
       env.firebaseConfig,
       initializeApp,
       getStorage,
-      (storage) => ref(storage, key),
+      (storage) => ref(storage, `masmott/${key}`),
       (objectRef) =>
         taskEither.tryCatch(
           () => getDownloadURL(objectRef),

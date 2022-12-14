@@ -7,10 +7,7 @@ import { match } from 'ts-pattern';
 import type { Stack } from '../../type';
 import { CodedError } from '../../type';
 
-const handleUnknownError = (value: unknown) => ({
-  code: 'ProviderError' as const,
-  value,
-});
+const handleUnknownError = (value: unknown) => ({ code: 'ProviderError' as const, value });
 
 export const upsertDoc: Stack['client']['db']['upsertDoc'] =
   (env) =>

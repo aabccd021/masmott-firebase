@@ -16,7 +16,7 @@ export const uploadDataUrl: Stack['client']['storage']['uploadDataUrl'] =
       env.firebaseConfig,
       initializeApp,
       getStorage,
-      (storage) => ref(storage, key),
+      (storage) => ref(storage, `masmott/${key}`),
       (objectRef) =>
         taskEither.tryCatch(
           () => uploadString(objectRef, dataUrl, 'data_url').then(() => undefined),
@@ -26,6 +26,9 @@ export const uploadDataUrl: Stack['client']['storage']['uploadDataUrl'] =
               match(codedError)
                 .with({ code: 'storage/invalid-format' }, () => ({
                   code: 'InvalidDataUrlFormat' as const,
+                }))
+                .with({ code: 'storage/unauthorized' }, () => ({
+                  code: 'Forbidden' as const,
                 }))
                 .otherwise(handleUnknownError)
             ),

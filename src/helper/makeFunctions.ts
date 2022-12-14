@@ -1,6 +1,6 @@
 import * as firebaseFunctions from 'firebase-functions';
-import { readonlyRecord } from 'fp-ts';
-import { pipe } from 'fp-ts/function';
+import { console, readonlyRecord, string, taskEither } from 'fp-ts';
+import { flow, pipe } from 'fp-ts/function';
 import * as std from 'fp-ts-std';
 import type { FunctionsBuilder } from 'masmott';
 import { applyServerEnv } from 'masmott';
@@ -19,10 +19,28 @@ export const makeFunctions = (param: {
     ({ functions }) => functions,
     readonlyRecord.map((functionValue) =>
       match(functionValue)
-        .with({ trigger: 'onAuthCreated' }, ({ handler }) =>
+        .with({ trigger: 'onAuthUserCreated' }, ({ handler }) =>
           firebaseFunctions.auth
             .user()
             .onCreate((authUser) => pipe({ authUser }, handler, std.task.execute))
+        )
+        .with({ trigger: 'onObjectCreated' }, ({ handler }) =>
+          firebaseFunctions.storage.object().onFinalize((object) =>
+            pipe(
+              object.name,
+              taskEither.fromNullable({
+                code: 'ProviderError',
+                details: 'object name is undefined',
+              }),
+              taskEither.map(
+                flow(string.replace('masmott/', ''), (name) => ({ object: { key: name } }))
+              ),
+              taskEither.chainFirstIOK(console.log),
+              taskEither.chain(handler),
+              taskEither.chainFirstIOK(console.log),
+              std.task.execute
+            )
+          )
         )
         .exhaustive()
     )
