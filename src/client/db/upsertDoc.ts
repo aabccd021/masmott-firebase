@@ -7,7 +7,7 @@ import { match } from 'ts-pattern';
 import type { Stack } from '../../type';
 import { CodedError } from '../../type';
 
-const handleUnknownError = (value: unknown) => ({ code: 'ProviderError' as const, value });
+const handleUnknownError = (value: unknown) => ({ code: 'Provider' as const, value });
 
 export const upsertDoc: Stack['client']['db']['upsertDoc'] =
   (env) =>
@@ -25,7 +25,7 @@ export const upsertDoc: Stack['client']['db']['upsertDoc'] =
             either.bimap(handleUnknownError, (codedError) =>
               match(codedError)
                 .with({ code: 'permission-denied' }, () => ({
-                  code: 'ForbiddenError' as const,
+                  code: 'Forbidden' as const,
                 }))
                 .otherwise(handleUnknownError)
             ),

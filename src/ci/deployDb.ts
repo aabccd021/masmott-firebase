@@ -118,7 +118,7 @@ export const deployDb: Stack['ci']['deployDb'] = () => (rules) =>
   pipe(
     taskEither.tryCatch(
       () => fs.writeFile('firestore.rules', getFirestoreRuleStr(rules)),
-      (value) => ({ code: 'ProviderError', value })
+      (value) => ({ code: 'Provider', value })
     ),
     taskEither.chainTaskK(() =>
       std.task.sleep(std.date.mkMilliseconds(parseFloat(process.env['DEPLOY_DB_DELAY'] ?? '3000')))

@@ -9,7 +9,7 @@ import { CodedError } from '../../type';
 
 type Type = Stack['client']['auth']['createUserAndSignInWithEmailAndPassword'];
 
-const handleUnknownError = (value: unknown) => ({ code: 'ProviderError' as const, value });
+const handleUnknownError = (value: unknown) => ({ code: 'Provider' as const, value });
 
 export const createUserAndSignInWithEmailAndPassword: Type =
   (env) =>

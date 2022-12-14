@@ -9,7 +9,7 @@ import type { Stack } from '../../type';
 
 type Type = Stack['client']['db']['onSnapshot'];
 
-const handleUnknownError = (value: unknown) => ({ code: 'ProviderError' as const, value });
+const handleUnknownError = (value: unknown) => ({ code: 'Provider' as const, value });
 
 export const onSnapshot: Type = (env) => (param) =>
   pipe(
@@ -26,7 +26,7 @@ export const onSnapshot: Type = (env) => (param) =>
           pipe(
             match(err)
               .with({ code: 'permission-denied' }, () => ({
-                code: 'ForbiddenError' as const,
+                code: 'Forbidden' as const,
               }))
               .otherwise(handleUnknownError),
             either.left,

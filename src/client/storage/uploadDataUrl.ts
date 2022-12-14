@@ -7,7 +7,7 @@ import { match } from 'ts-pattern';
 import type { Stack } from '../../type';
 import { CodedError } from '../../type';
 
-const handleUnknownError = (value: unknown) => ({ code: 'ProviderError' as const, value });
+const handleUnknownError = (value: unknown) => ({ code: 'Provider' as const, value });
 
 export const uploadDataUrl: Stack['client']['storage']['uploadDataUrl'] =
   (env) =>

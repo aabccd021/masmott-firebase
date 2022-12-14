@@ -10,7 +10,7 @@ export const getDoc: Stack['server']['db']['getDoc'] =
       taskEither.tryCatch(
         () => env.firebaseAdminApp.firestore().doc(`${collection}/${id}`).get(),
         (value) => ({
-          code: 'ProviderError' as const,
+          code: 'Provider' as const,
           value,
           capability: 'server.db.getDoc' as const,
         })

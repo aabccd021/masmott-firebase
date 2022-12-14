@@ -29,7 +29,7 @@ export const makeFunctions = (param: {
             pipe(
               object.name,
               taskEither.fromNullable({
-                code: 'ProviderError',
+                code: 'Provider',
                 details: 'object name is undefined',
               }),
               taskEither.map(

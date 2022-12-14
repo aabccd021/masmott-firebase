@@ -10,7 +10,7 @@ export const upsertDoc: Stack['server']['db']['upsertDoc'] =
       taskEither.tryCatch(
         () => env.firebaseAdminApp.firestore().doc(`${collection}/${id}`).set(data),
         (value) => ({
-          code: 'ProviderError' as const,
+          code: 'Provider' as const,
           value,
           capability: 'server.db.upsertDoc' as const,
         })

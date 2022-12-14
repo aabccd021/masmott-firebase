@@ -12,7 +12,7 @@ export const signOut: Type = (env) =>
     taskEither.tryCatch(
       () => _signOut(auth),
       (value) => ({
-        code: 'ProviderError' as const,
+        code: 'Provider' as const,
         capability: 'client.auth.signOut' as const,
         value,
       })
