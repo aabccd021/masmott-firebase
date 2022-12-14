@@ -8,7 +8,9 @@ import { runSuite } from './util';
       ? {
           ...suite,
           tests: suite.tests.map((test) =>
-            test.name === 'onAuthCreated trigger can upsert doc' ? { ...test, retry: 3 } : test
+            test.name === 'onAuthCreated trigger can upsert doc'
+              ? { ...test, retry: 3, timeOut: 60000 }
+              : test
           ),
         }
       : suite

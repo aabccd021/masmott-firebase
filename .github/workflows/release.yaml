@@ -86,7 +86,6 @@ jobs:
       - run: pnpm firebase --project demo emulators:exec 'vitest --run parallel.test.ts --shard=${{ matrix.shard }}/5'
         env:
           DEPLOY_DB_DELAY: 5000
-          TIMEOUT_DELAY: 60000
 
   release:
     needs: [lint-and-typecheck, test-serial, test-parallel]
