@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getStorage, ref, uploadString } from 'firebase/storage';
+import { doc, getFirestore, setDoc as _setDoc } from 'firebase/firestore/lite';
 import { either, taskEither } from 'fp-ts';
 import { flow, pipe } from 'fp-ts/function';
 import { match } from 'ts-pattern';
@@ -9,31 +9,28 @@ import { CodedError } from '../../type';
 
 const handleUnknownError = (value: unknown) => ({ code: 'Provider' as const, value });
 
-export const uploadDataUrl: Stack['client']['storage']['uploadDataUrl'] =
+export const upsertDoc: Stack['client']['db']['upsertDoc'] =
   (env) =>
-  ({ key, dataUrl }) =>
+  ({ key: { collection, id }, data }) =>
     pipe(
       env.firebaseConfig,
       initializeApp,
-      getStorage,
-      (storage) => ref(storage, `masmott/${key}`),
-      (objectRef) =>
+      getFirestore,
+      (firestore) => doc(firestore, collection, id),
+      (docRef) =>
         taskEither.tryCatch(
-          () => uploadString(objectRef, dataUrl, 'data_url').then(() => undefined),
+          () => _setDoc(docRef, data),
           flow(
             CodedError.decode,
             either.bimap(handleUnknownError, (codedError) =>
               match(codedError)
-                .with({ code: 'storage/invalid-format' }, () => ({
-                  code: 'InvalidDataUrlFormat' as const,
-                }))
-                .with({ code: 'storage/unauthorized' }, () => ({
+                .with({ code: 'permission-denied' }, () => ({
                   code: 'Forbidden' as const,
                 }))
                 .otherwise(handleUnknownError)
             ),
             either.toUnion,
-            (err) => ({ ...err, capability: 'client.storage.uploadDataUrl' })
+            (err) => ({ ...err, capability: 'client.db.upsertDoc' })
           )
         )
     );

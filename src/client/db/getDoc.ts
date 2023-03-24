@@ -1,11 +1,15 @@
 import { initializeApp } from 'firebase/app';
 import { doc, getDoc as _getDoc, getFirestore } from 'firebase/firestore/lite';
-import { option, task, taskEither } from 'fp-ts';
-import { pipe } from 'fp-ts/function';
+import { either, option, taskEither } from 'fp-ts';
+import { flow, pipe } from 'fp-ts/function';
+import { match } from 'ts-pattern';
 
-import type { Client } from '../../type';
+import type { Stack } from '../../type';
+import { CodedError } from '../../type';
 
-export const getDoc: Client['db']['getDoc'] =
+const handleUnknownError = (value: unknown) => ({ code: 'Provider' as const, value });
+
+export const getDoc: Stack['client']['db']['getDoc'] =
   (env) =>
   ({ key: { collection, id } }) =>
     pipe(
@@ -13,8 +17,24 @@ export const getDoc: Client['db']['getDoc'] =
       initializeApp,
       getFirestore,
       (firestore) => doc(firestore, collection, id),
-      (docRef) => () => _getDoc(docRef),
-      task.chainIOK((snapshot) => () => snapshot.data()),
-      task.map(option.fromNullable),
-      taskEither.fromTask
+      taskEither.of,
+      taskEither.chain((docRef) =>
+        taskEither.tryCatch(
+          () => _getDoc(docRef),
+          flow(
+            CodedError.decode,
+            either.bimap(handleUnknownError, (codedError) =>
+              match(codedError)
+                .with({ code: 'permission-denied' }, () => ({
+                  code: 'Forbidden' as const,
+                }))
+                .otherwise(handleUnknownError)
+            ),
+            either.toUnion,
+            (err) => ({ ...err, capability: 'client.db.getDoc' as const })
+          )
+        )
+      ),
+      taskEither.map((snapshot) => snapshot.data()),
+      taskEither.map(option.fromNullable)
     );

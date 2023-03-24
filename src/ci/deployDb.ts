@@ -1,24 +1,127 @@
-import { task, taskEither } from 'fp-ts';
-import { pipe } from 'fp-ts/function';
+import { option, readonlyArray, readonlyRecord, readonlyTuple, taskEither } from 'fp-ts';
+import { flow, pipe } from 'fp-ts/function';
+import type { Option } from 'fp-ts/Option';
 import * as std from 'fp-ts-std';
 import * as fs from 'fs/promises';
+import type { Stack as StackT } from 'masmott';
+import { match } from 'ts-pattern';
 
 import type { Stack } from '../type';
 
-const getFirestoreRule = (allow: boolean) => `
+const getRuleStr = (rule: StackT.ci.DeployDb.True | undefined) =>
+  pipe(
+    option.fromNullable(rule),
+    option.map(() => 'true'),
+    option.map((content) => `\n      allow get: if ${content};`)
+  );
+
+const equalRuleStr = (comparable: StackT.ci.DeployDb.Comparable[0]) =>
+  match(comparable)
+    .with({ type: 'AuthUid' }, () => 'request.auth.uid')
+    .with({ type: 'DocumentField' }, ({ fieldName }) => `request.resource.data.${fieldName}`)
+    .exhaustive();
+
+const createSecurityRuleStr = (nullableRule: StackT.ci.DeployDb.CreateRule | undefined) =>
+  pipe(
+    option.fromNullable(nullableRule),
+    option.map((rule) =>
+      match(rule)
+        .with({ type: 'True' }, () => 'true')
+        .with(
+          { type: 'Equal' },
+          ({ compare: [lhs, rhs] }) => `${equalRuleStr(lhs)} == ${equalRuleStr(rhs)}`
+        )
+        .exhaustive()
+    )
+  );
+
+const createSchemaRuleStr = (schema: StackT.ci.DeployDb.Schema): Option<string> =>
+  pipe(
+    schema,
+    readonlyRecord.fromRecord,
+    readonlyRecord.mapWithIndex((fieldName, field) =>
+      match(field)
+        .with({ type: 'IntField' }, () => `request.resource.data.${fieldName} is int`)
+        .with({ type: 'StringField' }, () => `request.resource.data.${fieldName} is string`)
+        .exhaustive()
+    ),
+    readonlyRecord.toReadonlyArray,
+    readonlyArray.map(readonlyTuple.snd),
+    option.fromPredicate(readonlyArray.isNonEmpty),
+    option.map(std.readonlyArray.join('\n        && '))
+  );
+
+const createRuleStr = (conf: StackT.ci.DeployDb.CollectionConfig) =>
+  pipe(
+    [createSecurityRuleStr(conf.securityRule?.create), createSchemaRuleStr(conf.schema)],
+    readonlyArray.sequence(option.Applicative),
+    option.map(std.readonlyArray.join('\n        && ')),
+    option.map((content) => `\n      allow create: if ${content};`)
+  );
+
+const updateSecurityRuleStr = (nullableRule: StackT.ci.DeployDb.UpdateRule | undefined) =>
+  pipe(
+    option.fromNullable(nullableRule),
+    option.map((rule) =>
+      match(rule)
+        .with({ type: 'True' }, () => 'true')
+        .exhaustive()
+    )
+  );
+
+const updateRuleStr = (conf: StackT.ci.DeployDb.CollectionConfig) =>
+  pipe(
+    [updateSecurityRuleStr(conf.securityRule?.update)],
+    readonlyArray.sequence(option.Applicative),
+    option.map(std.readonlyArray.join('\n        && ')),
+    option.map((content) => `\n      allow update: if ${content};`)
+  );
+
+const collectionRuleStr = (collectionName: string) => (content: string) =>
+  `\n    match /${collectionName}/{documentId} {\n${content}\n    } `;
+
+const allRuleStr = (content: string) => `
 rules_version = '2';
 service cloud.firestore {
-  match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if ${allow.toString()};
-    }
-  }
+${content}
 }
 `;
 
-export const deployDb: Stack['ci']['deployDb'] = (c) =>
+const getFirestoreRuleStr = (rules: StackT.ci.DeployDb.Param): string =>
   pipe(
-    () => fs.writeFile('firestore.rules', getFirestoreRule(c.securityRule?.type === 'allowAll')),
-    task.chainFirst(() => std.task.sleep(std.date.mkMilliseconds(250))),
+    rules.collections,
+    readonlyRecord.mapWithIndex((collectionName, collectionRule) =>
+      pipe(
+        [
+          getRuleStr(collectionRule.securityRule?.get),
+          createRuleStr(collectionRule),
+          updateRuleStr(collectionRule),
+        ],
+        readonlyArray.compact,
+        option.fromPredicate(readonlyArray.isNonEmpty),
+        option.map(flow(std.readonlyArray.join('\n'), collectionRuleStr(collectionName)))
+      )
+    ),
+    readonlyRecord.toReadonlyArray,
+    readonlyArray.map(readonlyTuple.snd),
+    readonlyArray.compact,
+    option.fromPredicate(readonlyArray.isNonEmpty),
+    option.map(std.readonlyArray.join('\n')),
+    option.map((content) => `  match /databases/{database}/documents {\n${content}\n  }`),
+    option.getOrElseW(
+      () => '  match /{document=**} { \n      allow read, write: if false; \n    }'
+    ),
+    allRuleStr
+  );
+
+export const deployDb: Stack['ci']['deployDb'] = () => (rules) =>
+  pipe(
+    taskEither.tryCatch(
+      () => fs.writeFile('firestore.rules', getFirestoreRuleStr(rules)),
+      (value) => ({ code: 'Provider', value })
+    ),
+    taskEither.chainTaskK(() =>
+      std.task.sleep(std.date.mkMilliseconds(parseFloat(process.env['DEPLOY_DB_DELAY'] ?? '3000')))
+    ),
     taskEither.fromTask
   );

@@ -2,9 +2,9 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithRedirect } from 'firebase/auth';
 import { pipe } from 'fp-ts/function';
 
-import type { Client } from '../../type';
+import type { Stack } from '../../type';
 
-type SignInWithGoogleRedirect = Client['auth']['signInWithGoogleRedirect'];
+type SignInWithGoogleRedirect = Stack['client']['auth']['signInWithGoogleRedirect'];
 
 export const signInWithGoogleRedirect: SignInWithGoogleRedirect = (env) =>
   pipe(

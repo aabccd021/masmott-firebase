@@ -1,31 +1,22 @@
-import { summonFor } from '@morphic-ts/batteries/lib/summoner-ESBST';
-import type { AType } from '@morphic-ts/summoners/lib';
-import { makeTagged } from '@morphic-ts/summoners/lib';
 import type { FirebaseOptions } from 'firebase/app';
-import type { Client as Client_, Stack as Stack_ } from 'masmott';
+import type * as admin from 'firebase-admin';
+import * as t from 'io-ts';
+import type { StackWithEnv } from 'masmott';
 
-const { summon } = summonFor({});
-
-export const GetDownloadUrlError = makeTagged(summon)('code')({
-  'storage/object-not-found': summon((F) =>
-    F.interface({ code: F.stringLiteral('storage/object-not-found') }, 'objectNotFound')
-  ),
+export const CodedError = t.type({
+  code: t.string,
 });
 
-export type StorageObjectNotFoundError = AType<typeof GetDownloadUrlError>;
-
-export const UploadDataUrlError = makeTagged(summon)('code')({
-  'storage/invalid-format': summon((F) =>
-    F.interface({ code: F.stringLiteral('storage/invalid-format') }, 'StorageInvalidFormatError')
-  ),
-});
-
-export type UploadDataUrlError = AType<typeof UploadDataUrlError>;
-
-export type ClientEnv = {
-  readonly firebaseConfig: FirebaseOptions;
+export type StackType = {
+  readonly env: {
+    readonly client: {
+      readonly firebaseConfig: FirebaseOptions;
+    };
+    readonly server: {
+      readonly firebaseAdminApp: admin.app.App;
+    };
+    readonly ci: undefined;
+  };
 };
 
-export type Client = Client_<ClientEnv>;
-
-export type Stack = Stack_<ClientEnv>;
+export type Stack = StackWithEnv<StackType>;
